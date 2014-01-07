@@ -327,42 +327,6 @@ def fade():
                 time.sleep((args.refresh_rate) / 1000.0)
 
 
-if CWIID_ENABLED:
-    def wiimote():
-        pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
-        print 'Put Wiimote in discoverable mode now (press 1+2)...'
-        global wiimote
-        global wii_movetimeout
-        global wii_movedir
-        global wii_color
-        wii_color = bytearray(PIXEL_SIZE)
-        wiimote = cwiid.Wiimote()
-        wiimote.mesg_callback = callback
-        print "Displaying..."
-        pixel_index = 0
-        wiimote.rpt_mode = cwiid.RPT_ACC
-        move_timeout = 0
-        while True:
-            if move_timeout >= wii_movetime:
-                move_timeout = 0
-                if wii_movedir == 1:
-                    pixel_index = (pixel_index + 1) % args.num_leds
-                else:
-                    pixel_index = pixel_index - 1
-            if pixel_index == -1:
-                        pixel_index = args.num_leds
-            move_timeout = move_timeout + 1
-
-    #is this needed; poling?
-        wiimote.request_status()
-        pixel_output[((pixel_index) * PIXEL_SIZE):] = filter_pixel(wii_color[:], 1)
-        pixel_output += '\x00' * ((args.num_leds + 1 - pixel_index) * PIXEL_SIZE)
-
-        write_stream(pixel_output)
-        spidev.flush()
-        time.sleep(wii_move_timeout)
-
-
 def chase():
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     print "Displaying..."
