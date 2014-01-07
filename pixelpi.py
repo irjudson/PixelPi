@@ -371,22 +371,17 @@ def filter_pixel(input_pixel, brightness):
     return output_pixel
 
 def server():
+    print "Connecting to server at: %s:%d" % (args.server, args.port)
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     while True:
-        print "Connecting to server at: %s:%d" % (args.server, args.port)
         data = json.loads(urllib2.urlopen("http://%s:%d/" % (args.server, args.port)).read())
-        print data
         color = data['global-color']
-        print "Setting all LEDS to %d" % color
-        current_color = bytearray(chr(color) + chr(color) + chr(color))
-
-        for pixel_index in range(args.num_leds):
-            pixel_output[((pixel_index - 2) * PIXEL_SIZE):] = filter_pixel(current_color, 0.2)
-            pixel_output[((pixel_index - 1) * PIXEL_SIZE):] = filter_pixel(current_color, 0.4)
-            pixel_output[((pixel_index) * PIXEL_SIZE):] = filter_pixel(current_color, 1)
-            pixel_output += '\x00' * ((args.num_leds - 1 - pixel_index) * PIXEL_SIZE)
-            write_stream(pixel_output)
-            spidev.flush()
+        print "Setting all LEDS to %s" % color
+        current_color = bytearray(chr(color[0]) + chr(color[1]) + chr(color[2]))
+    	for led in range(args.num_leds):
+       	    pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, color[3])
+    	write_stream(pixel_output)
+    	spidev.flush()
         time.sleep((args.refresh_rate) / 1000.0)
 
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
@@ -395,7 +390,7 @@ common_parser = argparse.ArgumentParser(add_help=False)
 common_parser.add_argument('--chip', action='store', dest='chip_type', default='WS2801', choices=['WS2801'], help='Specify chip type WS2801')
 common_parser.add_argument('--verbose', action='store_true', dest='verbose', default=True, help='enable verbose mode')
 common_parser.add_argument('--spi_dev', action='store', dest='spi_dev_name', required=False, default='/dev/spidev0.0', help='Set the SPI device descriptor')
-common_parser.add_argument('--refresh_rate', action='store', dest='refresh_rate', required=False, default=500, type=int, help='Set the refresh rate in ms (default 500ms)')
+common_parser.add_argument('--refresh_rate', action='store', dest='refresh_rate', required=False, default=1000, type=int, help='Set the refresh rate in ms (default 1000ms)')
 parser_strip = subparsers.add_parser('strip', parents=[common_parser], help='Stip Mode - Display an image using POV and a LED strip')
 parser_strip.set_defaults(func=strip)
 parser_strip.add_argument('--filename', action='store', dest='filename', required=False, help='Specify the image file eg: hello.png')
@@ -433,21 +428,11 @@ server_parser.add_argument('--port', action='store', dest='port', default=8000, 
 server_parser.add_argument('--num_leds', action='store', dest='num_leds', default=25, type=int,  help='Set the  number of LEDs in the string')
 
 args = parser.parse_args()
+
 spidev = file(args.spi_dev_name, "wb")
-# Calculate gamma correction table. This includes
-# LPD8806-specific conversion (7-bit color w/high bit set).
+
 for i in range(256):
     gamma[i] = int(pow(float(i) / 255.0, 2.5) * 255.0)
 
 
 args.func()
-
-
-#print "Chip Type             = %s" % args.chip_type
-#print "File Name             = %s" % args.filename
-#print "Display Mode          = %s" % args.mode
-#print "SPI Device Descriptor = %s" % args.spi_dev_name
-#print "Refresh Rate          = %s" % args.refresh_rate
-#print "Array Dimensions      = %dx%d" % (args.array_width, args.array_height)
-
-

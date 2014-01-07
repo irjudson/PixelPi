@@ -4,6 +4,7 @@ import sys
 import datetime
 import BaseHTTPServer
 import SimpleHTTPServer
+import random
 import json
 
 def next_color():
@@ -13,7 +14,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         color = next_color()
         data = {
-            'global-color' : color,
+            'global-color' : (next_color(), next_color(), next_color(), random.choice(range(75,100))/100.0),
         }
         json_data = json.dumps(data)
         self.send_response(200)
