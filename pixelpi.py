@@ -2,7 +2,9 @@ import argparse
 import csv
 import socket
 import time
-import Image
+import urllib2
+import json
+from PIL import Image
 
 
 # 3 bytes per pixel
@@ -368,6 +370,24 @@ def filter_pixel(input_pixel, brightness):
     output_pixel[2] = gamma[input_pixel[2]]
     return output_pixel
 
+def server():
+    pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
+    while True:
+        print "Connecting to server at: %s:%d" % (args.server, args.port)
+        data = json.loads(urllib2.urlopen("http://%s:%d/" % (args.server, args.port)).read())
+        print data
+        color = data['global-color']
+        print "Setting all LEDS to %d" % color
+        current_color = bytearray(chr(color) + chr(color) + chr(color))
+
+        for pixel_index in range(args.num_leds):
+            pixel_output[((pixel_index - 2) * PIXEL_SIZE):] = filter_pixel(current_color, 0.2)
+            pixel_output[((pixel_index - 1) * PIXEL_SIZE):] = filter_pixel(current_color, 0.4)
+            pixel_output[((pixel_index) * PIXEL_SIZE):] = filter_pixel(current_color, 1)
+            pixel_output += '\x00' * ((args.num_leds - 1 - pixel_index) * PIXEL_SIZE)
+            write_stream(pixel_output)
+            spidev.flush()
+        time.sleep((args.refresh_rate) / 1000.0)
 
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
 subparsers = parser.add_subparsers(help='sub command help?')
@@ -406,6 +426,11 @@ parser_all_on.add_argument('--num_leds', action='store', dest='num_leds', requir
 parser_all_off = subparsers.add_parser('all_off', parents=[common_parser], help='All Off Mode - Turn all LEDs Off')
 parser_all_off.set_defaults(func=all_off)
 parser_all_off.add_argument('--num_leds', action='store', dest='num_leds', required=True, default=50, type=int,  help='Set the  number of LEDs in the string')
+server_parser = subparsers.add_parser('server', parents=[common_parser], help='Connect to a server for data')
+server_parser.set_defaults(func=server)
+server_parser.add_argument('--host', action='store', dest='server', default='127.0.0.1', help='Connect to a specific server')
+server_parser.add_argument('--port', action='store', dest='port', default=8000, type=int, help='Connect to a specific server port')
+server_parser.add_argument('--num_leds', action='store', dest='num_leds', default=25, type=int,  help='Set the  number of LEDs in the string')
 
 args = parser.parse_args()
 spidev = file(args.spi_dev_name, "wb")
