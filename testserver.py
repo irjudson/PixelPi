@@ -4,6 +4,7 @@ import sys
 import datetime
 import BaseHTTPServer
 import SimpleHTTPServer
+import random
 import json
 
 def next_color():
@@ -41,6 +42,15 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                         [0, 255, 0, 0.5], 
                         ...
                     ]
+            }
+
+	pixels = list()
+	for i in range(100):
+	    pixels.append((next_color(), next_color(), next_color(), 1.0))
+
+        data = {
+            'global-color' : (next_color(), next_color(), next_color(), 1.0),
+	    'pixel-data' : pixels
         }
         data["JsonRequestBehavior"] = 0
         data["MaxJsonLength"] = None
