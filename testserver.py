@@ -9,12 +9,43 @@ import json
 def next_color():
     return datetime.datetime.now().microsecond % 255
 
+# Fear
+# Sadness
+# Joviality
+# Fatigue
+# Hostility
+# Serenity
+# Guilty
+# Positivity
+
 class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         color = next_color()
-        data = {
-            'global-color' : color,
+        data = dict()
+        data["ContentEncoding"] = None
+        data["ContentType"] = None
+        data["Data"] = {
+            "globals" : [
+                        { "color" : [] },
+                        { "searchtext" : "" },
+                        { "topicsCount" : 0 }
+                    ],
+                    "topics" : [
+                        [
+                            { "topictext" : "" },
+                            { "mood" : "" },
+                            { "hexColor" : "" }
+                        ]
+                    ],
+                    "pixels" : [
+                        [0, 255, 0, 0.5], 
+                        ...
+                    ]
         }
+        data["JsonRequestBehavior"] = 0
+        data["MaxJsonLength"] = None
+        data["RecursionLimit"] = None
+
         json_data = json.dumps(data)
         self.send_response(200)
         self.send_header("Content-type", "text/plain")
