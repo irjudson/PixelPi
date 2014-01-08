@@ -375,11 +375,14 @@ def server():
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     while True:
         data = json.loads(urllib2.urlopen("http://%s:%d/" % (args.server, args.port)).read())
+	print data
         color = data['global-color']
+	pixels = data['pixel-data']
         print "Setting all LEDS to %s" % color
         current_color = bytearray(chr(color[0]) + chr(color[1]) + chr(color[2]))
     	for led in range(args.num_leds):
-       	    pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, color[3])
+            current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
+       	    pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3])
     	write_stream(pixel_output)
     	spidev.flush()
         time.sleep((args.refresh_rate) / 1000.0)
