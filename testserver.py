@@ -10,6 +10,18 @@ import json
 def next_color():
     return datetime.datetime.now().microsecond % 255
 
+"""
+Hostility - Red (255.0.0)
+Guilt - Orange (255.125.0)
+Fear - Yellow (255.255.0)
+Joviality - Green (0.255.0)
+Serenity - Cyan (0.255.255)
+Sadness - Blue (0.0.255)
+Fatigue - Magenta (255.0.255)
+"""
+
+EMOTIONS = [ "Fear", "Sadness", "Joviality", "Fatigue", "Hostility", "Serenity", "Guilt" ]
+
 # Fear
 # Sadness
 # Joviality
@@ -17,7 +29,6 @@ def next_color():
 # Hostility
 # Serenity
 # Guilty
-# Positivity
 
 class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -31,23 +42,26 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         data["ContentType"] = None
         data["Data"] = {
             "globals" : [
-                        { "color" : [] },
+                        { "color" : [next_color(), next_color(), next_color(), 1.0] },
                         { "searchtext" : "" },
                         { "topicsCount" : 0 }
                     ],
-                    "topics" : [
-                        [
-                            { "topictext" : "" },
-                            { "mood" : "" },
-                            { "hexColor" : "" }
-                        ]
-                    ],
-                    "pixels" : [ pixels ]
+             "topics" : list(),
+             "pixels" : pixels
             }
 
         data["JsonRequestBehavior"] = 0
         data["MaxJsonLength"] = None
         data["RecursionLimit"] = None
+	
+	topics = data["Data"]["topics"]
+
+	for i in range(16):
+            topic = list()
+	    topic.append({ "topictext" : "foo" })
+	    topic.append({ "mood" : random.choice(EMOTIONS) })
+	    topic.append({ "hexColor" : "#00FF00" })
+	    topics.append(topic)
 
         json_data = json.dumps(data)
         self.send_response(200)
