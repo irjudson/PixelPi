@@ -11,16 +11,19 @@ from PIL import Image
 PIXEL_SIZE = 3
 
 """
-Hostility – Red (255.0.0)
-Guilt – Orange (255.125.0)
-Fear – Yellow (255.255.0)
-Joviality – Green (0.255.0)
-Serenity – Cyan (0.255.255)
-Sadness – Blue (0.0.255)
-Fatigue – Magenta (255.0.255)
+Hostility - Red (255.0.0)
+Guilt - Orange (255.125.0)
+Fear - Yellow (255.255.0)
+Joviality - Green (0.255.0)
+Serenity - Cyan (0.255.255)
+Sadness - Blue (0.0.255)
+Fatigue - Magenta (255.0.255)
 """
 
 VOLUME_INCREMENT = 0.25
+
+pygame.init()
+pygame.mixer.init()
 
 #Load audio files into Sound objects
 fear_track = pygame.mixer.Sound('Fear.wav')
@@ -43,16 +46,16 @@ EMOTIONS = {
     'Fatigue' : fatigue_track
 }
 
-RAINBOW = [RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET]
-BLACK = bytearray(b'\x00\x00\x00')
-WHITE = bytearray(b'\xff\xff\xff')
-
 RED = bytearray(b'\xff\x00\x00')
 ORANGE = bytearray(b'\xff\xa5\x00')
 YELLOW = bytearray(b'\xff\xff\x00')
 GREEN = bytearray(b'\x00\x80\x00')
 BLUE = bytearray(b'\x00\x00\xff')
 VIOLET = bytearray(b'\xee\x82\xee')
+RAINBOW = [RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET]
+BLACK = bytearray(b'\x00\x00\x00')
+WHITE = bytearray(b'\xff\xff\xff')
+
 
 
 def write_stream(pixels):
@@ -353,9 +356,6 @@ spidev = file(args.spi_dev_name, "wb")
 
 for i in range(256):
     gamma[i] = int(pow(float(i) / 255.0, 2.5) * 255.0)
-
-pygame.init()
-pygame.mixer.init()
 
 
 

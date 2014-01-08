@@ -40,7 +40,6 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                     ],
                     "pixels" : [
                         [0, 255, 0, 0.5], 
-                        ...
                     ]
             }
 
