@@ -33,7 +33,6 @@ fatigue_track = pygame.mixer.Sound('Fatigue.wav')
 hostility_track = pygame.mixer.Sound('Hostility.wav')
 serenity_track = pygame.mixer.Sound('Serenity.wav')
 guilty_track = pygame.mixer.Sound('Guilty.wav')
-positivity_track = pygame.mixer.Sound('Positivity.wav')
 
 
 EMOTIONS = {
@@ -290,14 +289,9 @@ def server():
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     while True:
         data = json.loads(urllib2.urlopen("http://%s:%d/" % (args.server, args.port)).read())
-        pixels = data['pixel-data']
-        color = data['global-color']
+        pixels = data['Data']['pixels']
+        color = data['Data']['globals'][0]['color']
 
-        for emotion, track in EMOTIONS.items():
-            track.set_volume(0.0)
-            track.set_volume(track.get_volume() + VOLUME_INCREMENT)
-
-        print "Setting all LEDS to %s" % color
         current_color = bytearray(chr(color[0]) + chr(color[1]) + chr(color[2]))
     	for led in range(args.num_leds):
             current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
@@ -305,6 +299,23 @@ def server():
     	
         write_stream(pixel_output)
     	spidev.flush()
+
+        print "Playing sounds..."
+        moods = dict()
+        for topic in data["Data"]["topics"]:
+            for element in topic:
+                if "mood" in element:
+	            mood = element["mood"]
+	            if mood in moods.keys():
+   		        moods[mood] += 1
+                    else:
+                        moods[mood] = 1
+        print moods
+	for emotion, track in EMOTIONS.items():
+            track.set_volume(0.0)
+	    if emotion in moods:
+                track.set_volume(moods[emotion] * VOLUME_INCREMENT)
+
         time.sleep(16)
 
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
@@ -367,7 +378,6 @@ fatigue_track.play(-1)
 hostility_track.play(-1)
 serenity_track.play(-1)
 guilty_track.play(-1)
-positivity_track.play(-1)
 
 #Set all tracks to volume 0
 fear_track.set_volume(0.0)
@@ -377,6 +387,5 @@ fatigue_track.set_volume(0.0)
 hostility_track.set_volume(0.0)
 serenity_track.set_volume(0.0)
 guilty_track.set_volume(0.0)
-positivity_track.set_volume(0.0)
 
 args.func()
