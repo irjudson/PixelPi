@@ -13,8 +13,13 @@ def next_color():
 class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         color = next_color()
+	pixels = list()
+	for i in range(100):
+	    pixels.append((next_color(), next_color(), next_color(), 1.0))
+
         data = {
-            'global-color' : (next_color(), next_color(), next_color(), random.choice(range(75,100))/100.0),
+            'global-color' : (next_color(), next_color(), next_color(), 1.0),
+	    'pixel-data' : pixels
         }
         json_data = json.dumps(data)
         self.send_response(200)
