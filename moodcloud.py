@@ -30,17 +30,20 @@ Fatigue - Magenta (255.0.255)
 
 VOLUME_INCREMENT = 0.25
 
+logger.debug("Initializing pygame.")
 pygame.init()
+logger.debug("Initializing pygame mixer.")
 pygame.mixer.init()
 
+logger.debug("Loading audio files.")
 #Load audio files into Sound objects
-fear_track = pygame.mixer.Sound('Fear.wav')
-sadness_track = pygame.mixer.Sound('Sadness.wav')
-joviality_track = pygame.mixer.Sound('Joviality.wav')
-fatigue_track = pygame.mixer.Sound('Fatigue.wav')
-hostility_track = pygame.mixer.Sound('Hostility.wav')
-serenity_track = pygame.mixer.Sound('Serenity.wav')
-guilty_track = pygame.mixer.Sound('Guilty.wav')
+fear_track = pygame.mixer.Sound('/home/pi/moodcloud/Fear.wav')
+sadness_track = pygame.mixer.Sound('/home/pi/moodcloud/Sadness.wav')
+joviality_track = pygame.mixer.Sound('/home/pi/moodcloud/Joviality.wav')
+fatigue_track = pygame.mixer.Sound('/home/pi/moodcloud/Fatigue.wav')
+hostility_track = pygame.mixer.Sound('/home/pi/moodcloud/Hostility.wav')
+serenity_track = pygame.mixer.Sound('/home/pi/moodcloud/Serenity.wav')
+guilty_track = pygame.mixer.Sound('/home/pi/moodcloud/Guilty.wav')
 
 
 EMOTIONS = {
@@ -296,7 +299,11 @@ def server():
     logger.debug("Connecting to server at: %s:%d" % (args.server, args.port))
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     while True:
+	logger.debug("Grabbing next set of sentiment data.")
         data = json.loads(urllib2.urlopen("http://%s:%d/api/moodcloud" % (args.server, args.port)).read())
+	logger.debug("Data: ")
+	logger.debug(json.dumps(data))
+	#logger.debug(json.dumps(data, sort_keys=True, indent=2))
 	logger.debug("Displaying...")
 	if 'pixels' in data:
             pixels = data['pixels']
