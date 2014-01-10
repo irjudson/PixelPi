@@ -290,12 +290,12 @@ def server():
     while True:
         data = json.loads(urllib2.urlopen("http://%s:%d/api/moodcloud" % (args.server, args.port)).read())
 	print "Displaying..."
-	if 'pixels' in data['Data']:
-            pixels = data['Data']['pixels']
-
+	if 'pixels' in data:
+            pixels = data['pixels']
+            print len(pixels)
     	    for led in range(args.num_leds):
                 current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
-       	        pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3])
+       	        pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3]/100.0)
     	
             write_stream(pixel_output)
     	    spidev.flush()
@@ -304,8 +304,8 @@ def server():
 
         print "Playing sounds..."
         moods = dict()
-	if "topics" in data["Data"]:
-            for topic in data["Data"]["topics"]:
+	if "topics" in data:
+            for topic in data["topics"]:
                 for element in topic:
                     if "mood" in element:
 	                mood = element["mood"]
@@ -361,9 +361,9 @@ parser_all_off.set_defaults(func=all_off)
 parser_all_off.add_argument('--num_leds', action='store', dest='num_leds', required=True, default=50, type=int,  help='Set the  number of LEDs in the string')
 server_parser = subparsers.add_parser('server', parents=[common_parser], help='Connect to a server for data')
 server_parser.set_defaults(func=server)
-server_parser.add_argument('--host', action='store', dest='server', default='127.0.0.1', help='Connect to a specific server')
-server_parser.add_argument('--port', action='store', dest='port', default=8000, type=int, help='Connect to a specific server port')
-server_parser.add_argument('--num_leds', action='store', dest='num_leds', default=25, type=int,  help='Set the  number of LEDs in the string')
+server_parser.add_argument('--host', action='store', dest='server', default='whooly.cloudapp.net', help='Connect to a specific server')
+server_parser.add_argument('--port', action='store', dest='port', default=80, type=int, help='Connect to a specific server port')
+server_parser.add_argument('--num_leds', action='store', dest='num_leds', default=96, type=int,  help='Set the  number of LEDs in the string')
 
 args = parser.parse_args()
 
