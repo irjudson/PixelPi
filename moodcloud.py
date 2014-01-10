@@ -5,7 +5,15 @@ import time
 import urllib2
 import json
 import pygame
+import logging
 from PIL import Image
+
+logger = logging.getLogger("moodcloud")
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler("/home/pi/moodcloud/output.log")
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+logger.addHandler(fh)
 
 # 3 bytes per pixel
 PIXEL_SIZE = 3
@@ -77,7 +85,7 @@ def correct_pixel_brightness(pixel):
 def pixelinvaders():
     """
     """    
-    print ("Start PixelInvaders listener " + args.UDP_IP + ":" + str(args.UDP_PORT))
+    logger.debug("Start PixelInvaders listener " + args.UDP_IP + ":" + str(args.UDP_PORT))
     sock = socket.socket(socket.AF_INET,  # Internet
                       socket.SOCK_DGRAM)  # UDP
     sock.bind((args.UDP_IP, args.UDP_PORT))
@@ -99,15 +107,15 @@ def strip():
     img = Image.open(args.filename).convert("RGB")
     input_image = img.load()
     image_width = img.size[0]
-    print "%dx%d pixels" % img.size
+    logger.debug("%dx%d pixels" % img.size)
     # Create bytearray for the entire image
     # R, G, B byte per pixel, plus extra '0' byte at end for latch.
-    print "Allocating..."
+    logger.debug("Allocating...")
     column = [0 for x in range(image_width)]
     for x in range(image_width):
         column[x] = bytearray(args.array_height * PIXEL_SIZE + 1)
 
-    print "Process Image..."
+    logger.debug("Process Image...")
     for x in range(image_width):
         for y in range(args.array_height):
             value = input_image[x, y]
@@ -116,7 +124,7 @@ def strip():
             column[x][y3 + 1] = value[1]
             column[x][y3 + 2] = value[2]
 
-    print "Displaying..."
+    logger.debug("Displaying...")
     while True:
         for x in range(image_width):
             write_stream(column[x])
@@ -135,22 +143,22 @@ def array():
                 filename = filename.rstrip()
                 if not filename:
                     continue
-                print filename
+                logger.debug(filename)
                 images.append(Image.open(filename).convert("RGB"))
     else:
         images.append(Image.open(args.filename).convert("RGB"))
 
     for img in images:
         input_image = img.load()
-        print "%dx%d pixels" % img.size
-        print "Reading in array map"
+        logger.debug("%dx%d pixels" % img.size)
+        logger.debug("Reading in array map")
         pixel_map_csv = csv.reader(open("pixel_map.csv", "rb"))
         pixel_map = []
         for p in pixel_map_csv:
             pixel_map.append(p)
         if len(pixel_map) != args.array_width * args.array_height:
-            print "Map size error"
-        print "Remapping"
+            logger.debug("Map size error")
+        logger.debug("Remapping")
         value = bytearray(PIXEL_SIZE)
 
         # Create a byte array ordered according to the pixel map file
@@ -159,7 +167,7 @@ def array():
             value = bytearray(input_image[int(pixel_map[array_index][0]), int(pixel_map[array_index][1])])
 
         pixel_output[(array_index * PIXEL_SIZE):] = filter_pixel(value[:], 1)
-        print "Displaying..."
+        logger.debug("Displaying...")
         write_stream(pixel_output)
         spidev.flush()
         time.sleep((args.refresh_rate) / 1000.0)
@@ -171,15 +179,15 @@ def pan():
     img = Image.open(args.filename).convert("RGB")
     input_image = img.load()
     image_width = img.size[0]
-    print "%dx%d pixels" % img.size
-    print "Reading in array map"
+    logger.debug("%dx%d pixels" % img.size)
+    logger.debug("Reading in array map")
     pixel_map_csv = csv.reader(open("pixel_map.csv", "rb"))
     pixel_map = []
     for p in pixel_map_csv:
         pixel_map.append(p)
     if len(pixel_map) != args.array_width * args.array_height:
-        print "Map size error"
-    print "Remapping"
+        logger.debug("Map size error")
+    logger.debug("Remapping")
 
     # Create a byte array ordered according to the pixel map file
     pixel_output = bytearray(args.array_width * args.array_height * PIXEL_SIZE + 1)
@@ -189,7 +197,7 @@ def pan():
                 value = bytearray(input_image[int(int(pixel_map[array_index][0]) + x_offset), int(pixel_map[array_index][1])])
                 pixel_output[(array_index * PIXEL_SIZE):] = filter_pixel(value[:], 1)
 
-        print "Displaying..."
+        logger.debug("Displaying...")
         write_stream(pixel_output)
         spidev.flush()
         time.sleep((args.refresh_rate) / 1000.0)
@@ -199,7 +207,7 @@ def all_off():
     """
     """
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
-    print "Turning all LEDs Off"
+    logger.debug("Turning all LEDs Off")
     for led in range(args.num_leds):
         pixel_output[led * PIXEL_SIZE:] = filter_pixel(BLACK, 1)
     write_stream(pixel_output)
@@ -210,7 +218,7 @@ def all_on():
     """
     """
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
-    print "Turning all LEDs On"
+    logger.debug("Turning all LEDs On")
     for led in range(args.num_leds):
         pixel_output[led * PIXEL_SIZE:] = filter_pixel(WHITE, 1)
     write_stream(pixel_output)
@@ -222,7 +230,7 @@ def fade():
     """
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     current_color = bytearray(PIXEL_SIZE)
-    print "Displaying..."
+    logger.debug("Displaying...")
 
     while True:
         for color in RAINBOW:
@@ -246,7 +254,7 @@ def chase():
     """
     """
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
-    print "Displaying..."
+    logger.debug("Displaying...")
     current_color = bytearray(PIXEL_SIZE)
     pixel_index = 0
     while True:
@@ -285,14 +293,13 @@ def filter_pixel(input_pixel, brightness):
 def server():
     """
     """
-    print "Connecting to server at: %s:%d" % (args.server, args.port)
+    logger.debug("Connecting to server at: %s:%d" % (args.server, args.port))
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     while True:
         data = json.loads(urllib2.urlopen("http://%s:%d/api/moodcloud" % (args.server, args.port)).read())
-	print "Displaying..."
+	logger.debug("Displaying...")
 	if 'pixels' in data:
             pixels = data['pixels']
-            print len(pixels)
     	    for led in range(args.num_leds):
                 current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
        	        pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3]/100.0)
@@ -300,9 +307,9 @@ def server():
             write_stream(pixel_output)
     	    spidev.flush()
         else:
-	    print "Leaving lights another round."
+	    logger.debug("Leaving lights another round.")
 
-        print "Playing sounds..."
+        logger.debug("Playing sounds...")
         moods = dict()
 	if "topics" in data:
             for topic in data["topics"]:
@@ -318,7 +325,7 @@ def server():
 	        if emotion in moods:
                     track.set_volume(moods[emotion] * VOLUME_INCREMENT)
 	else:
-	    print "Leaving sounds another round."
+	    logger.debug("Leaving sounds another round.")
 
         time.sleep(16)
 
