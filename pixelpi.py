@@ -288,33 +288,37 @@ def server():
     print "Connecting to server at: %s:%d" % (args.server, args.port)
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
     while True:
-        data = json.loads(urllib2.urlopen("http://%s:%d/" % (args.server, args.port)).read())
-        pixels = data['Data']['pixels']
-        color = data['Data']['globals'][0]['color']
+        data = json.loads(urllib2.urlopen("http://%s:%d/api/moodcloud" % (args.server, args.port)).read())
+	print "Displaying..."
+	if 'pixels' in data['Data']:
+            pixels = data['Data']['pixels']
 
-        current_color = bytearray(chr(color[0]) + chr(color[1]) + chr(color[2]))
-    	for led in range(args.num_leds):
-            current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
-       	    pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3])
+    	    for led in range(args.num_leds):
+                current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
+       	        pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3])
     	
-        write_stream(pixel_output)
-    	spidev.flush()
+            write_stream(pixel_output)
+    	    spidev.flush()
+        else:
+	    print "Leaving lights another round."
 
         print "Playing sounds..."
         moods = dict()
-        for topic in data["Data"]["topics"]:
-            for element in topic:
-                if "mood" in element:
-	            mood = element["mood"]
-	            if mood in moods.keys():
-   		        moods[mood] += 1
-                    else:
-                        moods[mood] = 1
-        print moods
-	for emotion, track in EMOTIONS.items():
-            track.set_volume(0.0)
-	    if emotion in moods:
-                track.set_volume(moods[emotion] * VOLUME_INCREMENT)
+	if "topics" in data["Data"]:
+            for topic in data["Data"]["topics"]:
+                for element in topic:
+                    if "mood" in element:
+	                mood = element["mood"]
+	                if mood in moods.keys():
+   		            moods[mood] += 1
+                        else:
+                            moods[mood] = 1
+	    for emotion, track in EMOTIONS.items():
+                track.set_volume(0.0)
+	        if emotion in moods:
+                    track.set_volume(moods[emotion] * VOLUME_INCREMENT)
+	else:
+	    print "Leaving sounds another round."
 
         time.sleep(16)
 
