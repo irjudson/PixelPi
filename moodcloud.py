@@ -28,8 +28,6 @@ Sadness - Blue (0.0.255)
 Fatigue - Magenta (255.0.255)
 """
 
-VOLUME_INCREMENT = 0.25
-
 logger.debug("Initializing pygame.")
 pygame.init()
 logger.debug("Initializing pygame mixer.")
@@ -43,7 +41,7 @@ joviality_track = pygame.mixer.Sound('/home/pi/moodcloud/Joviality.wav')
 fatigue_track = pygame.mixer.Sound('/home/pi/moodcloud/Fatigue.wav')
 hostility_track = pygame.mixer.Sound('/home/pi/moodcloud/Hostility.wav')
 serenity_track = pygame.mixer.Sound('/home/pi/moodcloud/Serenity.wav')
-guilty_track = pygame.mixer.Sound('/home/pi/moodcloud/Guilty.wav')
+guilty_track = pygame.mixer.Sound('/home/pi/moodcloud/Guilt.wav')
 
 
 EMOTIONS = {
@@ -327,10 +325,18 @@ def server():
    		            moods[mood] += 1
                         else:
                             moods[mood] = 1
+            MAX_VOLUME = 0.9
+            MIN_VOLUME = 0.3
+            maxm = max(moods.values())
+            minm = min(moods.values())
+            scale = (maxm - minm) / (MAX_VOLUME - MIN_VOLUME)
+	    translate = minm - MIN_VOLUME
+            for mood in moods:
+                moods[mood] = (moods[mood] * scale) - translate
 	    for emotion, track in EMOTIONS.items():
                 track.set_volume(0.0)
 	        if emotion in moods:
-                    track.set_volume(moods[emotion] * VOLUME_INCREMENT)
+                    track.set_volume(moods[emotion])
 	else:
 	    logger.debug("Leaving sounds another round.")
 
