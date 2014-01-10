@@ -329,11 +329,13 @@ def server():
             MIN_VOLUME = 0.3
             maxm = max(moods.values())
             minm = min(moods.values())
-            scale = (maxm - minm) / (MAX_VOLUME - MIN_VOLUME)
-	    translate = minm - MIN_VOLUME
+	    logger.debug("Freq: Max %d Min %d" % (maxm, minm))
+            scale = 1.0 - (maxm - minm) / (MAX_VOLUME - MIN_VOLUME)
+	    translate = maxm - MAX_VOLUME
+	    logger.debug("Scale: %f Translate: %f" % (scale, translate))
             for mood in moods:
                 moods[mood] = (moods[mood] * scale) - translate
-		logger.debug("Setting %s to volume %f" % (mood, mods[mood]))
+		logger.debug("Setting %s to volume %f" % (mood, moods[mood]))
 	    for emotion, track in EMOTIONS.items():
                 track.set_volume(0.0)
 	        if emotion in moods:
