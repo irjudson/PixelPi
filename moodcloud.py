@@ -340,6 +340,9 @@ def server():
             pixels = data['pixels']
             for step in range(STEPS):
     	        for led in range(args.num_leds):
+                    for p in [0, 1, 2]:
+                        if pixels[led][p] > 50 and pixels[led][p] < 205:
+                            pixels[led][p] += random.choice(range(-50, 50))
                     #current_color = bytearray(chr(pixels[led][0] + random.choice(range(-5, 5))) + chr(pixels[led][1] + random.choice(range(-5,5))) + chr(pixels[led][2] + random.choice(range(-5,5))))
                     current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
        	            pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3] / 100.0)
