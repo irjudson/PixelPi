@@ -5,6 +5,7 @@ import time
 import urllib2
 import json
 import pygame
+import random
 import logging
 from PIL import Image
 
@@ -14,6 +15,8 @@ fh = logging.FileHandler("/home/pi/moodcloud/output.log")
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
 logger.addHandler(fh)
+
+STEPS = 16
 
 # 3 bytes per pixel
 PIXEL_SIZE = 3
@@ -302,17 +305,6 @@ def server():
 	logger.debug("Data: ")
 	logger.debug(json.dumps(data))
 	#logger.debug(json.dumps(data, sort_keys=True, indent=2))
-	logger.debug("Displaying...")
-	if 'pixels' in data and data['pixels'] is not None:
-            pixels = data['pixels']
-    	    for led in range(args.num_leds):
-                current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
-       	        pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3]/100.0)
-    	
-            write_stream(pixel_output)
-    	    spidev.flush()
-        else:
-	    logger.debug("Leaving lights another round.")
 
         logger.debug("Playing sounds...")
         moods = dict()
@@ -343,7 +335,21 @@ def server():
 	else:
 	    logger.debug("Leaving sounds another round.")
 
-        time.sleep(16)
+	logger.debug("Displaying...")
+	if 'pixels' in data and data['pixels'] is not None:
+            pixels = data['pixels']
+            for step in range(STEPS):
+    	        for led in range(args.num_leds):
+                    #current_color = bytearray(chr(pixels[led][0] + random.choice(range(-5, 5))) + chr(pixels[led][1] + random.choice(range(-5,5))) + chr(pixels[led][2] + random.choice(range(-5,5))))
+                    current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
+       	            pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3] / 100.0)
+                write_stream(pixel_output)
+    	        spidev.flush()
+                logger.debug("Set leds")
+		time.sleep(1)
+        else:
+	    logger.debug("Leaving lights another round.")
+
 
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
 subparsers = parser.add_subparsers(help='sub command help?')
