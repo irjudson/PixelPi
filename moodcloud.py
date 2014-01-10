@@ -303,7 +303,7 @@ def server():
 	logger.debug(json.dumps(data))
 	#logger.debug(json.dumps(data, sort_keys=True, indent=2))
 	logger.debug("Displaying...")
-	if 'pixels' in data:
+	if 'pixels' in data and data['pixels'] is not None:
             pixels = data['pixels']
     	    for led in range(args.num_leds):
                 current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
@@ -316,7 +316,7 @@ def server():
 
         logger.debug("Playing sounds...")
         moods = dict()
-	if "topics" in data:
+	if "topics" in data and data['topics'] is not None:
             for topic in data["topics"]:
                 for element in topic:
                     if "mood" in element:
@@ -333,6 +333,7 @@ def server():
 	    translate = minm - MIN_VOLUME
             for mood in moods:
                 moods[mood] = (moods[mood] * scale) - translate
+		logger.debug("Setting %s to volume %f" % (mood, mods[mood]))
 	    for emotion, track in EMOTIONS.items():
                 track.set_volume(0.0)
 	        if emotion in moods:
