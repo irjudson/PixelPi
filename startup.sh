@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
 #
 
-sudo python /home/pi/moodcloud/moodcloud.py server >& /home/pi/moodcloud/log &
+# Ensure audio is loaded
+modprobe snd-bcm2835
+
+# Set the audio out
+amixer cset numid=3 1
+
+# Play a test sound
+aplay /usr/share/sounds/alsa/Noise.wav
+
+# Start moodcloud
+python /home/pi/moodcloud/moodcloud.py server &
