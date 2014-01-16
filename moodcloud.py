@@ -298,7 +298,7 @@ def server():
     """
     """
     logger.debug("Connecting to server at: %s:%d" % (args.server, args.port))
-    pixel_output = bytearray(args.num_leds * PIXEL_SIZE + 3)
+    pixel_output = bytearray(args.num_leds * PIXEL_SIZE)
     while True:
 	logger.debug("Grabbing next set of sentiment data.")
         data = json.loads(urllib2.urlopen("http://%s:%d/api/moodcloud" % (args.server, args.port)).read())
@@ -317,8 +317,8 @@ def server():
    		            moods[mood] += 1
                         else:
                             moods[mood] = 1
-            MAX_VOLUME = 0.9
-            MIN_VOLUME = 0.3
+            MAX_VOLUME = 0.95
+            MIN_VOLUME = 0.25
             maxm = max(moods.values())
             minm = min(moods.values())
 	    logger.debug("Freq: Max %d Min %d" % (maxm, minm))
@@ -326,32 +326,32 @@ def server():
 	    translate = maxm - MAX_VOLUME
 	    logger.debug("Scale: %f Translate: %f" % (scale, translate))
             for mood in moods:
-                moods[mood] = (moods[mood] * scale) - translate
+                moods[mood] = moods[mood] / float(maxm)
 		logger.debug("Setting %s to volume %f" % (mood, moods[mood]))
 	    for emotion, track in EMOTIONS.items():
                 track.set_volume(0.0)
 	        if emotion in moods:
-                    track.set_volume(moods[emotion])
+                    track.set_volume(moods[mood])
 	else:
 	    logger.debug("Leaving sounds another round.")
 
 	logger.debug("Displaying...")
 	if 'pixels' in data and data['pixels'] is not None:
             pixels = data['pixels']
-            for step in range(STEPS):
+	    for i in range(STEPS):
     	        for led in range(args.num_leds):
                     for p in [0, 1, 2]:
-                        if pixels[led][p] > 50 and pixels[led][p] < 205:
-                            pixels[led][p] += random.choice(range(-50, 50))
-                    #current_color = bytearray(chr(pixels[led][0] + random.choice(range(-5, 5))) + chr(pixels[led][1] + random.choice(range(-5,5))) + chr(pixels[led][2] + random.choice(range(-5,5))))
+                        if pixels[led][p] > 5 and pixels[led][p] < 250:
+                            pixels[led][p] += random.choice(range(-5, 5))
                     current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
-       	            pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3] / 100.0)
+       	            pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3])
                 write_stream(pixel_output)
     	        spidev.flush()
-                logger.debug("Set leds")
-		time.sleep(1)
+                logger.debug("Twinkle")
+	        time.sleep(1)
         else:
 	    logger.debug("Leaving lights another round.")
+	    time.sleep(16)
 
 
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
