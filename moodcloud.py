@@ -300,8 +300,9 @@ def server():
     logger.debug("Connecting to server at: %s:%d" % (args.server, args.port))
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE)
     while True:
-	logger.debug("Grabbing next set of sentiment data.")
-        data = json.loads(urllib2.urlopen("http://%s:%d/api/moodcloud" % (args.server, args.port)).read())
+        serverpath = "http://%s:%d/api/moodcloud" % (args.server, args.port)
+	logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
+        data = json.loads(urllib2.urlopen(serverpath).read())
 	logger.debug("Data: ")
 	logger.debug(json.dumps(data))
 	#logger.debug(json.dumps(data, sort_keys=True, indent=2))
@@ -338,17 +339,12 @@ def server():
 	logger.debug("Displaying...")
 	if 'pixels' in data and data['pixels'] is not None:
             pixels = data['pixels']
-	    for i in range(STEPS):
-    	        for led in range(args.num_leds):
-                    for p in [0, 1, 2]:
-                        if pixels[led][p] > 5 and pixels[led][p] < 250:
-                            pixels[led][p] += random.choice(range(-5, 5))
-                    current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
-       	            pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, pixels[led][3])
-                write_stream(pixel_output)
-    	        spidev.flush()
-                logger.debug("Twinkle")
-	        time.sleep(1)
+    	    for led in range(args.num_leds):
+                current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
+       	        pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, 0.9)
+            write_stream(pixel_output)
+    	    spidev.flush()
+	    time.sleep(16)
         else:
 	    logger.debug("Leaving lights another round.")
 	    time.sleep(16)
