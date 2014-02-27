@@ -324,7 +324,7 @@ def server():
         proc = Popen(cmd, shell=True, stdout=PIPE)
         ip = proc.communicate()[0]
         lcd.clear()
-        lcd.message('IP %s' % (ip))
+        lcd.message('IP %s\n%s' % (ip, data['searchtext']))
         logger.debug("Playing sounds...")
         moods = dict()
         if "topics" in data and data['topics'] is not None:
