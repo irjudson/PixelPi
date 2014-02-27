@@ -10,5 +10,7 @@ amixer cset numid=3 1
 # Play a test sound
 aplay /usr/share/sounds/alsa/Noise.wav
 
+sleep 10
+
 # Start moodcloud
 python /home/pi/moodcloud/moodcloud.py server &
