@@ -302,7 +302,7 @@ def server():
     lcd = Adafruit_CharLCDPlate()
     lcd.clear()
     lcd.message("MoodCloud v1.0!")
-    sleep(1)
+    time.sleep(1)
 
     btn = ((lcd.LEFT, 'Left.', lcd.ON),
             (lcd.RIGHT, 'Right.', lcd.ON),
@@ -321,8 +321,9 @@ def server():
         logger.debug("Data: ")
         logger.debug(json.dumps(data))
         #logger.debug(json.dumps(data, sort_keys=True, indent=2))
-        proc = Popen(cmd, shell=True, sdout=PIPE)
-        ip = p.communicate()[0]
+        proc = Popen(cmd, shell=True, stdout=PIPE)
+        ip = proc.communicate()[0]
+        lcd.clear()
         lcd.message('IP %s' % (ip))
         logger.debug("Playing sounds...")
         moods = dict()
@@ -330,41 +331,41 @@ def server():
             for topic in data["topics"]:
                 for element in topic:
                     if "mood" in element:
-                    mood = element["mood"]
-                    if mood in moods.keys():
-                    moods[mood] += 1
+                        mood = element["mood"]
+                        if mood in moods.keys():
+                            moods[mood] += 1
                         else:
                             moods[mood] = 1
             MAX_VOLUME = 0.95
             MIN_VOLUME = 0.25
             maxm = max(moods.values())
             minm = min(moods.values())
-        logger.debug("Freq: Max %d Min %d" % (maxm, minm))
+            logger.debug("Freq: Max %d Min %d" % (maxm, minm))
             scale = 1.0 - (maxm - minm) / (MAX_VOLUME - MIN_VOLUME)
-        translate = maxm - MAX_VOLUME
-        logger.debug("Scale: %f Translate: %f" % (scale, translate))
+            translate = maxm - MAX_VOLUME
+            logger.debug("Scale: %f Translate: %f" % (scale, translate))
             for mood in moods:
                 moods[mood] = moods[mood] / float(maxm)
-        logger.debug("Setting %s to volume %f" % (mood, moods[mood]))
-        for emotion, track in EMOTIONS.items():
+                logger.debug("Setting %s to volume %f" % (mood, moods[mood]))
+            for emotion, track in EMOTIONS.items():
                 track.set_volume(0.0)
-            if emotion in moods:
+                if emotion in moods:
                     track.set_volume(moods[mood])
-    else:
-        logger.debug("Leaving sounds another round.")
+                else:
+                    logger.debug("Leaving sounds another round.")
 
-    logger.debug("Displaying...")
-    if 'pixels' in data and data['pixels'] is not None:
+        logger.debug("Displaying...")
+        if 'pixels' in data and data['pixels'] is not None:
             pixels = data['pixels']
             for led in range(args.num_leds):
                 current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
                 pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, 0.9)
             write_stream(pixel_output)
             spidev.flush()
-        time.sleep(16)
+            time.sleep(16)
         else:
-        logger.debug("Leaving lights another round.")
-        time.sleep(16)
+            logger.debug("Leaving lights another round.")
+            time.sleep(16)
 
 
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
