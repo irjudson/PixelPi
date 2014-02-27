@@ -7,7 +7,9 @@ import json
 import pygame
 import random
 import logging
+from subprocess import * 
 from PIL import Image
+from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 
 logger = logging.getLogger("moodcloud")
 logger.setLevel(logging.DEBUG)
@@ -297,57 +299,72 @@ def filter_pixel(input_pixel, brightness):
 def server():
     """
     """
+    lcd = Adafruit_CharLCDPlate()
+    lcd.clear()
+    lcd.message("MoodCloud v1.0!")
+    sleep(1)
+
+    btn = ((lcd.LEFT, 'Left.', lcd.ON),
+            (lcd.RIGHT, 'Right.', lcd.ON),
+            (lcd.UP, 'Up.', lcd.ON),
+            (lcd.DOWN, 'Down.', lcd.ON),
+            (lcd.SELECT, 'Select.', lcd.ON))
+
+    cmd = "ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1"
+
     logger.debug("Connecting to server at: %s:%d" % (args.server, args.port))
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE)
     while True:
         serverpath = "http://%s:%d/api/moodcloud" % (args.server, args.port)
-	logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
+        logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
         data = json.loads(urllib2.urlopen(serverpath).read())
-	logger.debug("Data: ")
-	logger.debug(json.dumps(data))
-	#logger.debug(json.dumps(data, sort_keys=True, indent=2))
-
+        logger.debug("Data: ")
+        logger.debug(json.dumps(data))
+        #logger.debug(json.dumps(data, sort_keys=True, indent=2))
+        proc = Popen(cmd, shell=True, sdout=PIPE)
+        ip = p.communicate()[0]
+        lcd.message('IP %s' % (ip))
         logger.debug("Playing sounds...")
         moods = dict()
-	if "topics" in data and data['topics'] is not None:
+        if "topics" in data and data['topics'] is not None:
             for topic in data["topics"]:
                 for element in topic:
                     if "mood" in element:
-	                mood = element["mood"]
-	                if mood in moods.keys():
-   		            moods[mood] += 1
+                    mood = element["mood"]
+                    if mood in moods.keys():
+                    moods[mood] += 1
                         else:
                             moods[mood] = 1
             MAX_VOLUME = 0.95
             MIN_VOLUME = 0.25
             maxm = max(moods.values())
             minm = min(moods.values())
-	    logger.debug("Freq: Max %d Min %d" % (maxm, minm))
+        logger.debug("Freq: Max %d Min %d" % (maxm, minm))
             scale = 1.0 - (maxm - minm) / (MAX_VOLUME - MIN_VOLUME)
-	    translate = maxm - MAX_VOLUME
-	    logger.debug("Scale: %f Translate: %f" % (scale, translate))
+        translate = maxm - MAX_VOLUME
+        logger.debug("Scale: %f Translate: %f" % (scale, translate))
             for mood in moods:
                 moods[mood] = moods[mood] / float(maxm)
-		logger.debug("Setting %s to volume %f" % (mood, moods[mood]))
-	    for emotion, track in EMOTIONS.items():
+        logger.debug("Setting %s to volume %f" % (mood, moods[mood]))
+        for emotion, track in EMOTIONS.items():
                 track.set_volume(0.0)
-	        if emotion in moods:
+            if emotion in moods:
                     track.set_volume(moods[mood])
-	else:
-	    logger.debug("Leaving sounds another round.")
+    else:
+        logger.debug("Leaving sounds another round.")
 
-	logger.debug("Displaying...")
-	if 'pixels' in data and data['pixels'] is not None:
+    logger.debug("Displaying...")
+    if 'pixels' in data and data['pixels'] is not None:
             pixels = data['pixels']
-    	    for led in range(args.num_leds):
+            for led in range(args.num_leds):
                 current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
-       	        pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, 0.9)
+                pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, 0.9)
             write_stream(pixel_output)
-    	    spidev.flush()
-	    time.sleep(16)
+            spidev.flush()
+        time.sleep(16)
         else:
-	    logger.debug("Leaving lights another round.")
-	    time.sleep(16)
+        logger.debug("Leaving lights another round.")
+        time.sleep(16)
 
 
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
