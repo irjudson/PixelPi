@@ -318,17 +318,16 @@ def server():
         serverpath = "http://%s:%d/api/moodcloud" % (args.server, args.port)
         logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
         data = json.loads(urllib2.urlopen(serverpath).read())
-        logger.debug("Data: ")
-        logger.debug(json.dumps(data))
+        #logger.debug("Data: ")
         #logger.debug(json.dumps(data, sort_keys=True, indent=2))
         proc = Popen(cmd, shell=True, stdout=PIPE)
         ip = proc.communicate()[0]
         lcd.clear()
-        if 'serachtext' in data:
-            lcd.message('%s\n%s' % (ip, data['searchtext']))
+        logger.debug("Playing sounds...")
+        if 'searchtext' in data['globals'][1]:
+            lcd.message('%s\n%s' % (ip, data['globals'][1]['searchtext']))
         else:
             lcd.message('%s' % (ip))
-        logger.debug("Playing sounds...")
         moods = dict()
         if "topics" in data and data['topics'] is not None:
             for topic in data["topics"]:
