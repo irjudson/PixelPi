@@ -1,15 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/LEDStrip.css" />
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+
+      <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+      <script type="text/javascript" src="javascripts/ledstrip.js"></script>
+      <script type="text/javascript" src="javascripts/rAF.js"></script>
+      <script type="text/javascript" src="javascripts/ws2812.js"></script>
+      <script type="text/javascript" src="javascripts/color_wave.js"></script>
+      <script type="text/javascript">
+
+      var strip = new Array();
+    var animation = new Array(); // need to be global
+
+    $(document).ready(function(){
+      $('.ledstrip').each(function(index, value) {
+        console.log(index + " => " + value);
+        strip[index] = LEDstrip(value, 6, "vertical");
+        driver = new ColorWave(strip[index]);
+        driver.init();
+        animation[index] = driver.animate.bind(driver)();
+      })
+    });
+    </script>
     <title>MoodCloud</title>
   </head>
 
@@ -22,15 +44,39 @@
           <h2>Audio Visual Sentiment Art Installation</h2>
         </header>
 
-        <form action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" data-ajax="true" data-ajax-method="POST" id="form0" method="post">
-          <input id="search" name="search" type="text" value="" />     
-          <input type="submit" data-role="button" data-inline="true" data-mini="true" value="Search" data-ajax="false" />
-        </form>
+        <div id="content">
 
-        <footer>
-          <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by Melissa Quintanilha, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, and Shelly Farnham.
-        </footer>
+        <div class="Search">
+          <form action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
+            <input id="search" name="search" type="text" value=""></input>    
+            <input type="submit" value="Search"></input>
+          </form>
+        </div>
+
+          <div class="LEDBox">
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+            <div class="ledstrip"></div>
+          </div>
       </div>
+      
+      <footer>
+        <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by Melissa Quintanilha, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, and Shelly Farnham.
+      </footer>
     </div>
-  </body>
+  </div>
+</body>
 </html>
