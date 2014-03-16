@@ -4,6 +4,7 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
@@ -13,6 +14,7 @@
       <![endif]-->
 
       <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+      <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
       <script type="text/javascript" src="javascripts/ledstrip.js"></script>
       <script type="text/javascript" src="javascripts/rAF.js"></script>
       <script type="text/javascript" src="javascripts/ws2812.js"></script>
@@ -24,11 +26,15 @@
 
     $(document).ready(function(){
       $('.ledstrip').each(function(index, value) {
-        console.log(index + " => " + value);
+        // console.log(index + " => " + value);
         strip[index] = LEDstrip(value, 6, "vertical");
         driver = new ColorWave(strip[index]);
         driver.init();
         animation[index] = driver.animate.bind(driver)();
+        $('.LEDBox').accordion({
+          collapsible: true,
+          active: false
+        });
       })
     });
     </script>
@@ -46,37 +52,40 @@
 
         <div id="content">
 
-        <div class="Search">
-          <form action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
-            <input id="search" name="search" type="text" value=""></input>    
-            <input type="submit" value="Search"></input>
-          </form>
-        </div>
+          <div class="Search">
+            <form action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
+              <input id="search" name="search" type="text" value=""></input>    
+              <input type="submit" value="Search"></input>
+            </form>
+          </div>
 
           <div class="LEDBox">
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
-            <div class="ledstrip"></div>
+            <h3>MoodCloud Simulation</h3>
+            <div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+            </div>
           </div>
-      </div>
+        </div>
 
-      <footer>
-        <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by Melissa Quintanilha, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, and Shelly Farnham.
-      </footer>
+        <footer>
+          <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by Melissa Quintanilha, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, and Shelly Farnham.
+        </footer>
+      </div>
     </div>
-  </div>
-</body>
-</html>
+  </body>
+  </html>

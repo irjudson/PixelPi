@@ -46,7 +46,7 @@ var LEDstrip = function LEDstrip(el, stripsize, direction) {
 
 		for (i = 0; i < count; ++i) {
 			light = WS2812(); // new LED instance
-			console.log(light.elem);
+			// console.log(light.elem);
 	    	this.elem.appendChild(light.elem); // Add LED element to DOM as child of strip element
 	    	if (this.direction === "vertical") {
 	    		this.elem.appendChild(document.createElement("br"));

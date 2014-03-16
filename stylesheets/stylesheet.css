@@ -238,7 +238,7 @@ form {
 }
 
 #content {
-  height: 225px;
+  min-height: 300px;
   display: block;
   padding: 5px;
 }
@@ -319,6 +319,8 @@ footer {
   padding-bottom: 30px;
   font-size: 13px;
   color: #aaa;
+  position: fixed;
+  bottom: 0;
 }
 
 footer a {
