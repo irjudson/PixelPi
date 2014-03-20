@@ -7,6 +7,7 @@
     <RootNamespace>moodcloud</RootNamespace>
     <InterpreterId>{331f1763-4216-48cb-b739-fa5a7a397a2f}</InterpreterId>
     <InterpreterVersion>2.7</InterpreterVersion>
+    <NameOfLastUsedPublishProfile>moodcloud</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -31,6 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="manage.py" />
+    <Compile Include="moodcloud\models.py" />
+    <Compile Include="moodcloud\tests.py" />
+    <Compile Include="moodcloud\views.py" />
     <Compile Include="moodcloud\__init__.py" />
     <Compile Include="moodcloud\settings.py" />
     <Compile Include="moodcloud\urls.py" />
@@ -50,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="moodcloud\" />
+    <Folder Include="moodcloud\templates\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -62,6 +67,9 @@
       <LibraryPath>Lib\</LibraryPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="moodcloud\templates\index.html" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Python Tools\Microsoft.PythonTools.Django.targets" />
   <ProjectExtensions>
