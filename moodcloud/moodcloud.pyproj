@@ -55,9 +55,9 @@
   <ItemGroup>
     <Folder Include="moodcloud\" />
     <Folder Include="moodcloud\static\" />
-    <Folder Include="moodcloud\static\images\" />
-    <Folder Include="moodcloud\static\javascripts\" />
-    <Folder Include="moodcloud\static\stylesheets\" />
+    <Folder Include="moodcloud\static\img\" />
+    <Folder Include="moodcloud\static\js\" />
+    <Folder Include="moodcloud\static\css\" />
     <Folder Include="moodcloud\templates\" />
   </ItemGroup>
   <ItemGroup>
@@ -73,21 +73,22 @@
     </Interpreter>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="moodcloud\static\images\body-bg.png" />
-    <Content Include="moodcloud\static\images\highlight-bg.jpg" />
-    <Content Include="moodcloud\static\images\hr.png" />
-    <Content Include="moodcloud\static\images\octocat-icon.png" />
-    <Content Include="moodcloud\static\images\tar-gz-icon.png" />
-    <Content Include="moodcloud\static\images\zip-icon.png" />
-    <Content Include="moodcloud\static\javascripts\color_wave.js" />
-    <Content Include="moodcloud\static\javascripts\ledstrip.js" />
-    <Content Include="moodcloud\static\javascripts\main.js" />
-    <Content Include="moodcloud\static\javascripts\rAF.js" />
-    <Content Include="moodcloud\static\javascripts\ws2812.js" />
-    <Content Include="moodcloud\static\stylesheets\ledstrip.css" />
-    <Content Include="moodcloud\static\stylesheets\print.css" />
-    <Content Include="moodcloud\static\stylesheets\pygment_trac.css" />
-    <Content Include="moodcloud\static\stylesheets\stylesheet.css" />
+    <Content Include="moodcloud.sqlite3" />
+    <Content Include="moodcloud\static\img\body-bg.png" />
+    <Content Include="moodcloud\static\img\highlight-bg.jpg" />
+    <Content Include="moodcloud\static\img\hr.png" />
+    <Content Include="moodcloud\static\img\octocat-icon.png" />
+    <Content Include="moodcloud\static\img\tar-gz-icon.png" />
+    <Content Include="moodcloud\static\img\zip-icon.png" />
+    <Content Include="moodcloud\static\js\color_wave.js" />
+    <Content Include="moodcloud\static\js\ledstrip.js" />
+    <Content Include="moodcloud\static\js\main.js" />
+    <Content Include="moodcloud\static\js\rAF.js" />
+    <Content Include="moodcloud\static\js\ws2812.js" />
+    <Content Include="moodcloud\static\css\ledstrip.css" />
+    <Content Include="moodcloud\static\css\print.css" />
+    <Content Include="moodcloud\static\css\pygment_trac.css" />
+    <Content Include="moodcloud\static\css\stylesheet.css" />
     <Content Include="moodcloud\templates\index.html" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Python Tools\Microsoft.PythonTools.Django.targets" />

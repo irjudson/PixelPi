@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {% load staticfiles %}
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" />
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}stylesheets/stylesheet.css" media="screen" />
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}stylesheets/pygment_trac.css" media="screen" />
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}stylesheets/print.css" media="print" />
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}stylesheets/ledstrip.css" />
-    <!--[if lt IE 9]>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet.css' %}" media="screen" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/pygment_trac.css' %}" media="screen" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/print.css' %}" media="print" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/ledstrip.css' %}" />
+  <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-      <![endif]-->
-
-      <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-      <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}javascripts/ledstrip.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}javascripts/rAF.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}javascripts/ws2812.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}javascripts/color_wave.js"></script>
-      <script type="text/javascript">
-
-      var strip = new Array();
+  <![endif]-->
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+<!--  <script type="text/javascript" src="{% static 'js/ledstrip.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/rAF.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/ws2812.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/color_wave.js' %}"></script>
+  <script type="text/javascript">
+    var strip = new Array();
     var animation = new Array(); // need to be global
 
     $(document).ready(function(){
@@ -38,6 +37,7 @@
       })
     });
     </script>
+-->
     <title>MoodCloud</title>
   </head>
 
@@ -54,8 +54,8 @@
 
           <div class="Search">
             <form action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
-              <input id="search" name="search" type="text" value=""></input>    
-              <input type="submit" value="Search"></input>
+              <input id="search" name="search" type="text" value="">    
+              <input type="submit" value="Search">
             </form>
           </div>
 
@@ -88,4 +88,4 @@
       </div>
     </div>
   </body>
-  </html>
+</html>
