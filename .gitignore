@@ -35,3 +35,4 @@ pip-log.txt
 /moodcloud/obj/Debug
 *.suo
 /moodcloud/moodcloud/static/js
+/moodcloud/web.config

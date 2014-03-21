@@ -31,6 +31,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="fetchdata.py" />
     <Compile Include="manage.py" />
     <Compile Include="moodcloud\models.py" />
     <Compile Include="moodcloud\tests.py" />
@@ -80,7 +81,6 @@
     <Content Include="moodcloud\static\img\octocat-icon.png" />
     <Content Include="moodcloud\static\img\tar-gz-icon.png" />
     <Content Include="moodcloud\static\img\zip-icon.png" />
-    <Content Include="moodcloud\static\js\color_wave.js" />
     <Content Include="moodcloud\static\js\ledstrip.js" />
     <Content Include="moodcloud\static\js\main.js" />
     <Content Include="moodcloud\static\js\rAF.js" />
