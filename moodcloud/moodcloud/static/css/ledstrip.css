@@ -1,8 +1,10 @@
 .ledstrip {
     display: block;
     float: left;
-    border: 1px solid #888;
+    /*
     background-color: #aaa;
+    border: 1px solid #888;
+    */
     margin: 1em 0em 0em 1em;
 }
 
@@ -14,15 +16,49 @@
 
 .ledlight, .WS2812-led {
     display: block;
-    width: 10px;
-    height: 10px;
+    width: 20px;
+    height: 20px;
     float: left;
-    border: 1px solid #ddd;
+    border: 1px solid #000;
     background-color: #000;
-    margin: 2px;
+    border-radius: 50%;
+}
+
+.LEDBox {
+    text-align: center;
+    width: 100%;
+}
+
+.simulation {
+    display: inline-block;
+    border: none;
+    background: none;
 }
 
 #output {
   clear: left;
   margin-top: 1em;
+}
+
+.rot-neg-90 {
+    -moz-transform:rotate(-270deg); 
+    -moz-transform-origin: bottom left;
+    -webkit-transform: rotate(-270deg);
+    -webkit-transform-origin: bottom left;
+    -o-transform: rotate(-270deg);
+    -o-transform-origin:  bottom left;
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+.search-form {
+    width: 100%;
+}
+
+header > h1 {
+    text-align: center;
+}
+
+header > h4 {
+    text-align: right;
+    font-weight: 100;
 }

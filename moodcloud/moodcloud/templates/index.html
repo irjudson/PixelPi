@@ -17,23 +17,41 @@
   <script type="text/javascript" src="{% static 'js/ledstrip.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/rAF.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/ws2812.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/color_wave.js' %}"></script>
   <script type="text/javascript">
     var strip = new Array();
     var animation = new Array(); // need to be global
 
+    function executeQuery() {
+      $.ajax({
+        url: '/data',
+        success: function(data) {
+            //console.log(data);
+            //console.log(data['globals'][1]['searchtext']);
+            var pixels = data['pixels'];
+            for (var i=0;i<16;i++) {
+                strip[i].clear();
+                for (var j=0;j<6;j++) {
+                    var idx = i*6+j;
+                    strip[i].buffer[j] = pixels[idx].slice(0,3);
+                }
+                strip[i].send();
+            }
+            $(document).find("[name=search]").val(data['globals'][1]['searchtext']);
+        },
+        error: function() {
+            console.log("There was an error retrieving data for moodcloud.");
+        }
+      });
+    }
+
     $(document).ready(function(){
       $('.ledstrip').each(function(index, value) {
-        // console.log(index + " => " + value);
         strip[index] = LEDstrip(value, 6, "vertical");
-        driver = new ColorWave(strip[index]);
-        driver.init();
-        animation[index] = driver.animate.bind(driver)();
-        $('.LEDBox').accordion({
-          collapsible: true,
-          active: false
-        });
-      })
+      });
+
+      executeQuery();
+      setInterval(executeQuery, 16000);
+
     });
     </script>
     <title>MoodCloud</title>
@@ -44,22 +62,20 @@
       <div class="inner">
 
         <header>
-          <h1>MoodCloud</h1>
-          <h2>Audio Visual Sentiment Art Installation</h2>
+          <h1>moodcloud</h1>
+          <h4>Audio Visual Sentiment Art Installation</h4>
         </header>
 
         <div id="content">
-
-          <div class="Search">
-            <form action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
-              <input id="search" name="search" type="text" value="">    
-              <input type="submit" value="Search">
+            <form class="search-form" action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
+              <span>
+                <input id="search" name="search" type="text" value="">    
+                <input type="submit" value="Search">
+              </span>
             </form>
-          </div>
 
-          <div class="LEDBox">
-            <h3>MoodCloud Simulation</h3>
-            <div>
+          <div class="LEDBox ui-widget ui-helper-reset">
+            <div class="simulation ui-widget-content ui-helper-reset">
               <div class="ledstrip"></div>
               <div class="ledstrip"></div>
               <div class="ledstrip"></div>
