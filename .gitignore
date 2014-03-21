@@ -25,3 +25,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+/moodcloud/ptvs_virtualenv_proxy.py
+/moodcloud/moodcloud.v12.suo
+/moodcloud/moodcloud.sqlite3
+/moodcloud/moodcloud.pubxml.user
+/moodcloud/moodcloud.pubxml
+/moodcloud/static
+/moodcloud/env
+/moodcloud/obj/Debug
+*.suo
+/moodcloud/moodcloud/static/js
