@@ -5,19 +5,19 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
-
+from django.utils.timezone import utc
 from django.conf import settings
 
 import urllib2
 import json
+import datetime
 
 import models
 
 def index(request):
     return render(request, 'index.html', RequestContext(request))
 
-# Get data from Whoooly
-def fetch_data(request):
+def fetch():
     data = urllib2.urlopen(settings.DATA_URL).read()
     json_data = json.loads(data)
     result = models.Result(search_term=json_data['globals'][1]['searchtext'])
@@ -28,19 +28,31 @@ def fetch_data(request):
         topic.save()
         result.topics.add(topic)
     result.save()
+    return result
+
+# Get data from Whoooly
+def fetch_data(request):
+    # Get Data
+    fetch()
     # Store the data in a model
     return HttpResponse()
 
 # Return data to app/device
 def get_data(request):
-    result = models.Result.objects.latest()
+    diff = models.Result.objects.latest().created_at - datetime.datetime.now().replace(tzinfo=utc)
+    if diff.seconds > settings.UPDATE_FREQUENCY:
+        result = fetch()
+    else:
+        result = models.Result.objects.latest()
     json_data = serializers.serialize('json', [result])
     jd = json.loads(json_data)[0]
     jd['fields']['topics'] = json.loads(serializers.serialize('json', result.topics.all()))
     moods = dict()
+    count = 0
     for topic in result.topics.all():
         jmd = json.loads(serializers.serialize('json', [topic.mood]))[0]
-        jd['fields']['topics'][topic.id-1]['fields']['mood'] = jmd
+        jd['fields']['topics'][count]['fields']['mood'] = jmd
+        count += 1
     return HttpResponse(json.dumps(jd), mimetype='application/json')
 
 @csrf_exempt
