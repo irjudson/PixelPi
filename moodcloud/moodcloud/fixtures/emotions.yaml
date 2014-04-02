@@ -1,0 +1,42 @@
+- model: moodcloud.Emotion
+  pk: 1
+  fields:
+    label: 'Fear'
+    color: '#ffff00'
+    html_color: '#E1B700'
+- model: moodcloud.Emotion
+  pk: 2
+  fields:
+    label: 'Joviality'
+    color: '#00ff00'
+    html_color: '#07B918'
+- model: moodcloud.Emotion
+  pk: 3
+  fields:
+    label: 'Serenity'
+    color: '#00ffff'
+    html_color: '#31859C'
+- model: moodcloud.Emotion
+  pk: 4
+  fields:
+    label: 'Sadness'
+    color: '#0000ff'
+    html_color: '#21375E'
+- model: moodcloud.Emotion
+  pk: 5
+  fields:
+    label: 'Fatigue'
+    color: '#ff00ff'
+    html_color: '#953735'
+- model: moodcloud.Emotion
+  pk: 6
+  fields:
+    label: 'Hostility'
+    color: '#ff0000'
+    html_color: '#ff0000'
+- model: moodcloud.Emotion
+  pk: 7
+  fields:
+    label: 'Guilt'
+    color: '#ff8000'
+    html_color: '#E06B0A'

@@ -1,19 +1,20 @@
+import sys
 import argparse
 import csv
 import socket
 import time
-import urllib2
+import urllib, urllib2, cookielib
 import json
 import pygame
 import random
 import logging
 from subprocess import * 
 from PIL import Image
-from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
+from BeautifulSoup import BeautifulSoup
 
 logger = logging.getLogger("moodcloud")
 logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler("/home/pi/moodcloud/output.log")
+fh = logging.FileHandler("output.log")
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
 logger.addHandler(fh)
@@ -24,7 +25,7 @@ STEPS = 16
 PIXEL_SIZE = 3
 
 """
-Hostility - Red (255.0.0)
+Hostility - Red (255.0.0)  
 Guilt - Orange (255.125.0)
 Fear - Yellow (255.255.0)
 Joviality - Green (0.255.0)
@@ -296,38 +297,57 @@ def filter_pixel(input_pixel, brightness):
     output_pixel[2] = gamma[input_pixel[2]]
     return output_pixel
 
+def get_ip(server_url):
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8",53))
+    ip = s.getsockname()[0]
+    s.close()
+
+    reg_url = server_url+"register"
+    req = urllib2.Request(server_url+"register")
+    req.add_header('Content-Type', 'application/json')
+    response = urllib2.urlopen(req, json.dumps({'ip':ip}))
+    print response.read()
+
+    return ip
+
 def server():
     """
     """
-    lcd = Adafruit_CharLCDPlate()
-    lcd.clear()
-    lcd.message("MoodCloud v1.0!")
-    time.sleep(1)
+    if args.simulate != True:
+        lcd = Adafruit_CharLCDPlate()
+        lcd.clear()
+        lcd.message("MoodCloud v1.0!")
+        time.sleep(1)
 
-    btn = ((lcd.LEFT, 'Left.', lcd.ON),
-            (lcd.RIGHT, 'Right.', lcd.ON),
-            (lcd.UP, 'Up.', lcd.ON),
-            (lcd.DOWN, 'Down.', lcd.ON),
-            (lcd.SELECT, 'Select.', lcd.ON))
-
-    cmd = "ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1"
+        btn = ((lcd.LEFT, 'Left.', lcd.ON),
+                (lcd.RIGHT, 'Right.', lcd.ON),
+                (lcd.UP, 'Up.', lcd.ON),
+                (lcd.DOWN, 'Down.', lcd.ON),
+                (lcd.SELECT, 'Select.', lcd.ON))
 
     logger.debug("Connecting to server at: %s:%d" % (args.server, args.port))
+
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE)
+    server = "http://%s:%d/" % (args.server, args.port)
     while True:
-        serverpath = "http://%s:%d/api/moodcloud" % (args.server, args.port)
+        serverpath = server + "data/"
         logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
         data = json.loads(urllib2.urlopen(serverpath).read())
-        #logger.debug("Data: ")
-        #logger.debug(json.dumps(data, sort_keys=True, indent=2))
-        proc = Popen(cmd, shell=True, stdout=PIPE)
-        ip = proc.communicate()[0]
-        lcd.clear()
+        logger.debug("Data: ")
+        logger.debug(json.dumps(data, sort_keys=True, indent=2))
+
+        ip = get_ip(server)
+        
+        if args.simulate != True:
+            lcd.clear()
+            if 'searchtext' in data['globals'][1]:
+                lcd.message('%s\n%s' % (ip, data['globals'][1]['searchtext']))
+            else:
+                lcd.message('%s' % (ip))
+
         logger.debug("Playing sounds...")
-        if 'searchtext' in data['globals'][1]:
-            lcd.message('%s\n%s' % (ip, data['globals'][1]['searchtext']))
-        else:
-            lcd.message('%s' % (ip))
         moods = dict()
         if "topics" in data and data['topics'] is not None:
             for topic in data["topics"]:
@@ -362,8 +382,9 @@ def server():
             for led in range(args.num_leds):
                 current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
                 pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, 0.9)
-            write_stream(pixel_output)
-            spidev.flush()
+            if args.simulate != True:
+                write_stream(pixel_output)
+                spidev.flush()
             time.sleep(16)
         else:
             logger.debug("Leaving lights another round.")
@@ -409,18 +430,27 @@ parser_all_off.set_defaults(func=all_off)
 parser_all_off.add_argument('--num_leds', action='store', dest='num_leds', required=True, default=50, type=int,  help='Set the  number of LEDs in the string')
 server_parser = subparsers.add_parser('server', parents=[common_parser], help='Connect to a server for data')
 server_parser.set_defaults(func=server)
-server_parser.add_argument('--host', action='store', dest='server', default='whooly.cloudapp.net', help='Connect to a specific server')
+server_parser.add_argument('--host', action='store', dest='server', default='moodcloud.azurewebsites.net', help='Connect to a specific server')
 server_parser.add_argument('--port', action='store', dest='port', default=80, type=int, help='Connect to a specific server port')
+server_parser.add_argument('--sim', action='store_true', dest='simulate', default=False, help='Enable simulation for local development')
 server_parser.add_argument('--num_leds', action='store', dest='num_leds', default=96, type=int,  help='Set the  number of LEDs in the string')
 
 args = parser.parse_args()
+
+if args.verbose:
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+if args.func == server and args.simulate != True:
+    from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 
 spidev = file(args.spi_dev_name, "wb")
 
 for i in range(256):
     gamma[i] = int(pow(float(i) / 255.0, 2.5) * 255.0)
-
-
 
 #Play Sound objects in infinite loop
 fear_track.play(-1)

@@ -7,10 +7,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'moodcloud.views.index', name='index'),
-    url(r'^data$', 'moodcloud.views.get_data', name='data'),
-
-    # url(r'^$', 'moodcloud.views.home', name='home'),
-    #url(r'^moodcloud/', include('moodcloud.moodcloud.urls')),
+    url(r'^data/', 'moodcloud.views.get_data', name='data'),
+    url(r'^fetchdata/', 'moodcloud.views.fetch_data', name='data'),
+    url(r'^register', 'moodcloud.views.register', name='register'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
