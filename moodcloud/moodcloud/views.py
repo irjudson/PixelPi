@@ -12,6 +12,7 @@ import urllib2
 import json
 import datetime
 
+import pytz
 import models
 
 def index(request):
@@ -39,10 +40,13 @@ def fetch_data(request):
 
 # Return data to app/device
 def get_data(request):
-    diff = models.Result.objects.latest().created_at - datetime.datetime.now().replace(tzinfo=utc)
+    diff =  pytz.utc.localize( datetime.datetime.utcnow() ) - models.Result.objects.latest().created_at
+    print "DIFF: %d THRESHOLD: %d" % (diff.seconds, settings.UPDATE_FREQUENCY)
     if diff.seconds > settings.UPDATE_FREQUENCY:
+        print "Fetching new data"
         result = fetch()
     else:
+        print "Reusing old data"
         result = models.Result.objects.latest()
     json_data = serializers.serialize('json', [result])
     jd = json.loads(json_data)[0]
