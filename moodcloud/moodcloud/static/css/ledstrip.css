@@ -62,3 +62,31 @@ header > h4 {
     text-align: right;
     font-weight: 100;
 }
+
+.circle {
+    display: block;
+    width: 15px;
+    height: 15px;
+    float: left;
+    border: 1px solid #000;
+    background-color: #000;
+    border-radius: 50%;
+}
+
+.showing {
+    padding-left: 18px;
+    line-height: 1em;
+    margin-bottom: 0px;
+    vertical-align: middle;
+    background-image:url(../img/open.png);
+    background-repeat:no-repeat;
+}
+
+.hidden {
+    padding-left: 15px;
+    line-height: 1em;
+    vertical-align: middle;
+    margin-bottom: 0px;
+    background-image:url(../img/closed.png);
+    background-repeat:no-repeat;
+}

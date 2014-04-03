@@ -52,7 +52,20 @@
       $('.ledstrip').each(function(index, value) {
         strip[index] = LEDstrip(value, 6, "vertical");
       });
-
+      $(".key_content").hide();
+      $("#key").addClass("hidden");
+      //toggle the componenet with class msg_body
+      $('#key').click(function() {
+        if ($('.key_content').is(':hidden')) {
+            $('.key_content').show();
+            $('#key').addClass("showing");
+            $('#key').removeClass("hidden");
+        } else {
+            $('.key_content').hide();
+            $('#key').removeClass("showing");
+            $('#key').addClass("hidden");
+        }
+      });
       executeQuery();
       setInterval(executeQuery, 1);
 
@@ -71,14 +84,7 @@
         </header>
 
         <div id="content">
-            <form class="search-form" action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
-              <span>
-                <input id="search" name="search" type="text" value="">    
-                <input type="submit" value="Search">
-              </span>
-            </form>
-
-          <div class="LEDBox ui-widget ui-helper-reset">
+<div class="LEDBox ui-widget ui-helper-reset">
             <div class="simulation ui-widget-content ui-helper-reset">
               <div class="ledstrip"></div>
               <div class="ledstrip"></div>
@@ -98,6 +104,30 @@
               <div class="ledstrip"></div>
             </div>
           </div>
+
+           <div>
+            <div style="float:left;width:70%">
+            <form class="search-form" action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
+              <span>
+                <input id="search" name="search" type="text" value="">    
+                <input type="submit" value="Search">
+              </span>
+            </form>
+            </div>
+            <div style="float:right;border: 1px solid #888;padding:5px;margin-top: 15px;">
+                <p id="key">Color - Emotion Key</p>
+                <div class="key_content">
+                    <div><div class="circle" style="background-color: #00FF00;"></div>&nbsp<span style="color:#07B918;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Joviality</span></div>
+                    <div><div class="circle" style="background-color: #FF00FF"></div>&nbsp<span style="color:#953735;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Fatigue</span></div>
+                    <div><div class="circle" style="background-color: #FF0000"></div>&nbsp<span style="color:#E10000;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Hostility</span></div>
+                    <div><div class="circle" style="background-color: #0000FF"></div>&nbsp<span style="color:#21375E;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Sadness</span></div>
+                    <div><div class="circle" style="background-color: #00FFFF"></div>&nbsp<span style="color:#31859C;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Serenity</span></div>
+                    <div><div class="circle" style="background-color: #FFFF00"></div>&nbsp<span style="color:#FFB700;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Fear</span></div>
+                    <div><div class="circle" style="background-color: #FF8000"></div>&nbsp<span style="color:#E06B0A;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Guilt</span></div>
+                </div>
+            </div>
+          </div>
+          
         </div>
 
         <footer>
