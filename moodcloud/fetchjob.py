@@ -16,6 +16,7 @@ for i in range(12):
     print "\tRunning: %s" % before
     response = urllib.urlopen('http://moodcloud.azurewebsites.net/data/')
     html = response.read()
+    print html
     after = datetime.datetime.utcnow() - before
     call_time_sum += after.microseconds
     call_time_count += 1.0

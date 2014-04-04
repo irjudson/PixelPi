@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 <head>
   {% load staticfiles %}
@@ -17,6 +18,85 @@
   <script type="text/javascript" src="{% static 'js/ledstrip.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/rAF.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/ws2812.js' %}"></script>
+
+  <title>MoodCloud</title>
+</head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>moodcloud</h1>
+          <h4>Audio Visual Sentiment Art Installation</h4>
+        </header>
+
+        <div id="content">
+          <div class="search_result">
+            <div id="search_term_insert"  style="font-size: small">
+            <label>Search Term:</label>
+            <strong></strong>
+            </div>
+            <div id="search_timedate_insert" style="font-size: xx-small">
+            <label>Searched:</label>
+            <em></em>
+            </div>
+          </div>
+          <div class="LEDBox ui-widget ui-helper-reset">
+            <div class="simulation ui-widget-content ui-helper-reset">
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+              <div class="ledstrip"></div>
+            </div>
+          </div>
+
+           <div>
+            <div style="float:left;width:70%">
+            <form class="search-form" action="/search/" method="post">
+            {% csrf_token %}
+              <span>
+                <input id="search" name="search" type="text" value="">
+                <input type="submit" value="Search">
+              </span>
+            </form>
+            </div>
+            <div style="float:right;border: 1px solid #888;padding:5px;margin-top: 15px;">
+                <p id="key">Color - Emotion Key</p>
+                <div class="key_content">
+                    <div><div class="circle" style="background-color: #00FF00;"></div>&nbsp;<span style="color:#07B918;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Joviality</span></div>
+                    <div><div class="circle" style="background-color: #FF00FF"></div>&nbsp;<span style="color:#953735;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Fatigue</span></div>
+                    <div><div class="circle" style="background-color: #FF0000"></div>&nbsp;<span style="color:#E10000;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Hostility</span></div>
+                    <div><div class="circle" style="background-color: #0000FF"></div>&nbsp;<span style="color:#21375E;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Sadness</span></div>
+                    <div><div class="circle" style="background-color: #00FFFF"></div>&nbsp;<span style="color:#31859C;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Serenity</span></div>
+                    <div><div class="circle" style="background-color: #FFFF00"></div>&nbsp;<span style="color:#FFB700;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Fear</span></div>
+                    <div><div class="circle" style="background-color: #FF8000"></div>&nbsp;<span style="color:#E06B0A;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Guilt</span></div>
+                </div>
+            </div>
+          </div>          
+        </div>
+
+        <footer>
+          <div class="technical_info">
+            <span id="ipaddr" style="font-size:x-small">MoodCloud IP: {{IP}}</span>
+            <span id="mcip_updated" style="font-size:xx-small;font-style:italic">Last seen: {{IP_updated}}</span>
+          </div>
+          <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by <a href="http://www.wesense.co/">Melissa Quintanilha</a>, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, Shelly Farnham and Christopher Rampey.
+        </footer>
+      </div>
+    </div>
   <script type="text/javascript">
     var strip = new Array();
     var animation = new Array(); // need to be global
@@ -26,7 +106,7 @@
         url: '/data/',
         success: function(data) {
             if (data) {
-                //console.log(data);
+                //console.log(data['fields']);
                 //console.log(data['fields']['search_term']);
                 if (data.hasOwnProperty('fields') && data['fields'].hasOwnProperty('topics')) {
                     for(var i=0; i<data['fields']['topics'].length; i++) {
@@ -47,12 +127,15 @@
                           l.title = topic['topic'];
                       }
                       strip[i].send();
-                 }
+                   }
                 }
                 if (data.hasOwnProperty('fields') && data['fields'].hasOwnProperty('search_term')) {
-                    $(document).find("[name=search]").val(data['fields']['search_term']);
+                    $('#search_term_insert strong')[0].innerText = data['fields']['search_term'];
+                    var d = new Date(data['fields']['created_at']);
+                    $('#search_timedate_insert em')[0].innerText = d.toDateString() + " " + d.toTimeString();
                 }
             }
+            //console.log("Updated from whooly.");
         },
         error: function() {
             console.log("There was an error retrieving data for moodcloud.");
@@ -79,78 +162,8 @@
             $('#key').addClass("hidden");
         }
       });
-      executeQuery();
-      setInterval(executeQuery, 1);
-
+      setInterval(executeQuery, 1000);
     });
     </script>
-    <title>MoodCloud</title>
-  </head>
-
-  <body>
-    <div id="container">
-      <div class="inner">
-
-        <header>
-          <h1>moodcloud</h1>
-          <h4>Audio Visual Sentiment Art Installation</h4>
-        </header>
-
-        <div id="content">
-<div class="LEDBox ui-widget ui-helper-reset">
-            <div class="simulation ui-widget-content ui-helper-reset">
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-              <div class="ledstrip"></div>
-            </div>
-          </div>
-
-           <div>
-            <div style="float:left;width:70%">
-            <form class="search-form" action="http://whooly.cloudapp.net/Home/MoodCloudSearchResult" method="post">
-              <span>
-                <input id="search" name="search" type="text" value="">    
-                <input type="submit" value="Search">
-              </span>
-            </form>
-            </div>
-            <div style="float:right;border: 1px solid #888;padding:5px;margin-top: 15px;">
-                <p id="key">Color - Emotion Key</p>
-                <div class="key_content">
-                    <div><div class="circle" style="background-color: #00FF00;"></div>&nbsp<span style="color:#07B918;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Joviality</span></div>
-                    <div><div class="circle" style="background-color: #FF00FF"></div>&nbsp<span style="color:#953735;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Fatigue</span></div>
-                    <div><div class="circle" style="background-color: #FF0000"></div>&nbsp<span style="color:#E10000;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Hostility</span></div>
-                    <div><div class="circle" style="background-color: #0000FF"></div>&nbsp<span style="color:#21375E;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Sadness</span></div>
-                    <div><div class="circle" style="background-color: #00FFFF"></div>&nbsp<span style="color:#31859C;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Serenity</span></div>
-                    <div><div class="circle" style="background-color: #FFFF00"></div>&nbsp<span style="color:#FFB700;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Fear</span></div>
-                    <div><div class="circle" style="background-color: #FF8000"></div>&nbsp<span style="color:#E06B0A;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Guilt</span></div>
-                </div>
-            </div>
-          </div>
-          
-        </div>
-
-        <div class="technical_info">
-            {{IP}}<br/>
-            {{IP_updated}}
-        </div>
-        <footer>
-          <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by <a href="http://www.wesense.co/">Melissa Quintanilha</a>, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, Shelly Farnham and Christopher Rampey.
-        </footer>
-      </div>
-    </div>
   </body>
 </html>
