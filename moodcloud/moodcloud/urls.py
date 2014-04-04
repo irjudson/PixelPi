@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^data/', 'moodcloud.views.get_data', name='data'),
     url(r'^fetchdata/', 'moodcloud.views.fetch_data', name='data'),
     url(r'^register', 'moodcloud.views.register', name='register'),
+    url(r'^search/(?P<search_term>)$', 'moodcloud.views.search', name='search'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

@@ -53,15 +53,15 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         data["JsonRequestBehavior"] = 0
         data["MaxJsonLength"] = None
         data["RecursionLimit"] = None
-	
-	topics = data["Data"]["topics"]
+    
+    topics = data["Data"]["topics"]
 
-	for i in range(16):
+    for i in range(16):
             topic = list()
-	    topic.append({ "topictext" : "foo" })
-	    topic.append({ "mood" : random.choice(EMOTIONS) })
-	    topic.append({ "hexColor" : "#00FF00" })
-	    topics.append(topic)
+        topic.append({ "topictext" : "foo" })
+        topic.append({ "mood" : random.choice(EMOTIONS) })
+        topic.append({ "hexColor" : "#00FF00" })
+        topics.append(topic)
 
         json_data = json.dumps(data)
         self.send_response(200)
