@@ -8,6 +8,7 @@ import json
 import pygame
 import random
 import logging
+import array
 from subprocess import * 
 from PIL import Image
 from BeautifulSoup import BeautifulSoup
@@ -140,7 +141,7 @@ def strip():
         time.sleep((args.refresh_rate / 1000.0))
 
 
-def array():
+def ledarray():
     """
     """
     images = []
@@ -342,22 +343,36 @@ def server():
         
         if args.simulate != True:
             lcd.clear()
-            if 'searchtext' in data['globals'][1]:
-                lcd.message('%s\n%s' % (ip, data['globals'][1]['searchtext']))
+            if 'search_term' in data['fields']:
+                lcd.message('%s\n%s' % (ip, data['fields']['search_term']))
             else:
                 lcd.message('%s' % (ip))
+        else:
+            if 'search_term' in data['fields']:
+                print "Search Term: %s" % data['fields']['search_term']
 
         logger.debug("Playing sounds...")
         moods = dict()
-        if "topics" in data and data['topics'] is not None:
-            for topic in data["topics"]:
-                for element in topic:
-                    if "mood" in element:
-                        mood = element["mood"]
-                        if mood in moods.keys():
-                            moods[mood] += 1
-                        else:
-                            moods[mood] = 1
+        for topic in data['fields']['topics']:
+            if 'mood' in topic['fields']:
+                mood = topic['fields']['mood']['fields']['label']
+                if mood in moods.keys():
+                    moods[mood] += 1
+                else:
+                    moods[mood] = 1
+
+                logger.debug("Displaying...")
+                idx = data['fields']['topics'].index(topic)
+                string_length = 6
+                color = topic['fields']['mood']['fields']['color']
+                for i in range(6):
+                    led = idx * string_length + i
+                    current_color = array.array('B', color[1:7].decode("hex"))
+                    pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, 0.9)
+                if args.simulate != True:
+                    write_stream(pixel_output)
+                    spidev.flush()  
+
             MAX_VOLUME = 0.95
             MIN_VOLUME = 0.25
             maxm = max(moods.values())
@@ -376,21 +391,6 @@ def server():
                 else:
                     logger.debug("Leaving sounds another round.")
 
-        logger.debug("Displaying...")
-        if 'pixels' in data and data['pixels'] is not None:
-            pixels = data['pixels']
-            for led in range(args.num_leds):
-                current_color = bytearray(chr(pixels[led][0]) + chr(pixels[led][1]) + chr(pixels[led][2]))
-                pixel_output[led * PIXEL_SIZE:] = filter_pixel(current_color, 0.9)
-            if args.simulate != True:
-                write_stream(pixel_output)
-                spidev.flush()
-            time.sleep(16)
-        else:
-            logger.debug("Leaving lights another round.")
-            time.sleep(16)
-
-
 parser = argparse.ArgumentParser(add_help=True, version='1.0', prog='pixelpi.py')
 subparsers = parser.add_subparsers(help='sub command help?')
 common_parser = argparse.ArgumentParser(add_help=False)
@@ -403,7 +403,7 @@ parser_strip.set_defaults(func=strip)
 parser_strip.add_argument('--filename', action='store', dest='filename', required=False, help='Specify the image file eg: hello.png')
 parser_strip.add_argument('--array_height', action='store', dest='array_height', required=True, type=int, default='7', help='Set the Y dimension of your pixel array (height)')
 parser_array = subparsers.add_parser('array', parents=[common_parser], help='Array Mode - Display an image on a pixel array')
-parser_array.set_defaults(func=array)
+parser_array.set_defaults(func=ledarray)
 parser_array.add_argument('--filename', action='store', dest='filename', required=False, help='Specify the image file eg: hello.png')
 parser_array.add_argument('--array_width', action='store', dest='array_width', required=True, type=int, default='7', help='Set the X dimension of your pixel array (width)')
 parser_array.add_argument('--array_height', action='store', dest='array_height', required=True, type=int, default='7', help='Set the Y dimension of your pixel array (height)')
