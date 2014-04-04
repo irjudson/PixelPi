@@ -25,22 +25,34 @@
       $.ajax({
         url: '/data/',
         success: function(data) {
-            //console.log(data);
-            //console.log(data['fields']['search_term']);
-            for(var i=0; i<data['fields']['topics'].length; i++) {
-              var topic = data['fields']['topics'][i]['fields'];
-              //console.log(topic['topic']+" : "+topic['mood']['fields']['label']+" "+topic['mood']['fields']['color']);
-              var hex = topic['mood']['fields']['color'];
-              var rgb = [parseInt(hex.slice(1,3), 16), parseInt(hex.slice(3,5), 16), parseInt(hex.slice(5), 16)];
-              //console.log("RGB: "+rgb);
-              strip[i].clear();
-              for (var j=0;j<6;j++) {
-                  var idx = i*6+j;
-                  strip[i].buffer[j] = rgb;
-              }
-              strip[i].send();
+            if (data) {
+                //console.log(data);
+                //console.log(data['fields']['search_term']);
+                if (data.hasOwnProperty('fields') && data['fields'].hasOwnProperty('topics')) {
+                    for(var i=0; i<data['fields']['topics'].length; i++) {
+                      var topic = data['fields']['topics'][i]['fields'];
+                      //console.log(topic['topic']+" : "+topic['mood']['fields']['label']+" "+topic['mood']['fields']['color']);
+                      var hex = topic['mood']['fields']['color'];
+                      var rgb = [parseInt(hex.slice(1,3), 16), parseInt(hex.slice(3,5), 16), parseInt(hex.slice(5), 16)];
+                      //console.log("RGB: "+rgb);
+                      strip[i].clear();
+                      for (var j=0;j<6;j++) {
+                          var idx = i*6+j;
+                          strip[i].buffer[j] = rgb;
+                          console.log("Setting title of " + i + "," +j+" to " + topic['topic']);
+                          var s = $(".ledstrip")[i];
+                          console.log(s);
+                          var l = $(s).find(".WS2812-led")[j];
+                          console.log(l);
+                          l.title = topic['topic'];
+                      }
+                      strip[i].send();
+                 }
+                }
+                if (data.hasOwnProperty('fields') && data['fields'].hasOwnProperty('search_term')) {
+                    $(document).find("[name=search]").val(data['fields']['search_term']);
+                }
             }
-            $(document).find("[name=search]").val(data['fields']['search_term']);
         },
         error: function() {
             console.log("There was an error retrieving data for moodcloud.");
@@ -52,6 +64,7 @@
       $('.ledstrip').each(function(index, value) {
         strip[index] = LEDstrip(value, 6, "vertical");
       });
+      $().tooltip();
       $(".key_content").hide();
       $("#key").addClass("hidden");
       //toggle the componenet with class msg_body
