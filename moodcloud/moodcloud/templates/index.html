@@ -39,11 +39,11 @@
                       for (var j=0;j<6;j++) {
                           var idx = i*6+j;
                           strip[i].buffer[j] = rgb;
-                          console.log("Setting title of " + i + "," +j+" to " + topic['topic']);
+                          //console.log("Setting title of " + i + "," +j+" to " + topic['topic']);
                           var s = $(".ledstrip")[i];
-                          console.log(s);
+                          //console.log(s);
                           var l = $(s).find(".WS2812-led")[j];
-                          console.log(l);
+                          //console.log(l);
                           l.title = topic['topic'];
                       }
                       strip[i].send();
