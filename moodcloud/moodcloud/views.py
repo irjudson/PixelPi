@@ -16,21 +16,14 @@ import pytz
 import models
 
 def make_result_from_json(json_data):
-    print "Making result from data"
-    print json_data
     if 'searchtext' in json_data['globals'][1]:
         result = models.Result(search_term=json_data['globals'][1]['searchtext'])
-        print "Made base result"
         result.save()
         for t in json_data['topics']:
-            print "Working on topics"
             topic_mood = models.Emotion.objects.get(label=t[1]['mood'])
-            print "Got mood for topic"
             topic = models.Topic(topic=t[0]['topictext'], mood=topic_mood)
-            print "Made topic"
             topic.save()
             result.topics.add(topic)
-            print "Added topic to result"
         result.save()
         return result
     else:
@@ -52,30 +45,34 @@ def do_search(search_term):
     else:
         return None
 
-    print "Got cookie"
-
     # Then using that cookie, we call the AuthorizeCallback to get access to the search
     request = urllib2.Request(server_url+"/Home/AuthorizeCallback")
     request.add_header('Cookie', session_cookie)
     response = urllib2.urlopen(request)
 
-    print "Got authorized"
-
-    # Finally we run the search with the term passed in
+    print "Calling search...",
     request = urllib2.Request(server_url+"/Home/MoodCloudSearchResult")
     request.add_header('Content-Type', 'application/json')
     request.add_header('Cookie', session_cookie)
-    response = urllib2.urlopen(request, json.dumps({'search':search_term}))
-    content = response.read()
-
-    print "Called search"
+    response2 = urllib2.urlopen(request, json.dumps({'search':search_term}))
+    content = response2.read()
     print content
 
-    # And as a post step we create a result from the json data
     if len(content) > 0:
+        print "Fetching json result from api to verify...",
         request = urllib2.Request(server_url+"/api/moodcloud")
-        data = urllib2.urlopen(request).read()
+        response3 = urllib2.urlopen(request)
+        data = response3.read()
         print data
+        jd = json.loads(data)
+        print jd
+        if jd['topics'] is None:
+            print "failed! (to get search results)"
+            return None
+        if jd['globals'][1]['searchtext'] == search_term:
+            print "verified!"
+        else:
+            print "failed."
         result = make_result_from_json(json.loads(data))
         print "Search Result: ", result
         return result
@@ -95,6 +92,7 @@ def search(request, search_term):
         print "Worked"
     else:
         print "Failed"
+    return redirect('index')
 
 # Get data from Whoooly
 def fetch_data(request):
