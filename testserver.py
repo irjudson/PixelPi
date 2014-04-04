@@ -81,5 +81,5 @@ httpd = BaseHTTPServer.HTTPServer((host, port), MyHandler)
 
 sa = httpd.socket.getsockname()
 
-print "Serving HTTP on", sa[0], "port", sa[1], "..."
+print("Serving HTTP on", sa[0], "port", sa[1], "...")
 httpd.serve_forever()

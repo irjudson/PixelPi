@@ -56,33 +56,33 @@ while True:
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         fear_track.set_volume(volume_set) 
-        print "Fear Track Volume Set to:"
-        print volume_set
+        print("Fear Track Volume Set to:")
+        print(volume_set)
     else:
         fear_track.set_volume(0.0)
-        print "----- Fear Track disabled"
+        print("----- Fear Track disabled")
 
 ########### Sadness   ##### 
     
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         sadness_track.set_volume(volume_set)
-        print "Sadness Track Volume Set to:"
-        print volume_set
+        print("Sadness Track Volume Set to:")
+        print(volume_set)
     else:
         sadness_track.set_volume(0.0)
-        print "----- Sadness Track disabled"
+        print("----- Sadness Track disabled")
 
 ########### joviality  ##### 
     
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         joviality_track.set_volume(volume_set)
-        print "Joviality Track Volume Set to:"
-        print volume_set
+        print("Joviality Track Volume Set to:")
+        print(volume_set)
     else:
         joviality_track.set_volume(0.0)
-        print "----- Joviality Track disabled"
+        print("----- Joviality Track disabled")
 
 
 ########### Fatigue  ##### 
@@ -90,11 +90,11 @@ while True:
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         fatigue_track.set_volume(volume_set)
-        print "Fatigue Track Volume Set to:"
-        print volume_set
+        print("Fatigue Track Volume Set to:")
+        print(volume_set)
     else:
         fatigue_track.set_volume(0.0)
-        print "----- Fatigue Track disabled"
+        print("----- Fatigue Track disabled")
 
 
 ########### Hostility  ##### 
@@ -102,44 +102,44 @@ while True:
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         hostility_track.set_volume(volume_set)
-        print "Hostility Track Volume Set to:"
-        print volume_set
+        print("Hostility Track Volume Set to:")
+        print(volume_set)
     else:
         hostility_track.set_volume(0.0)
-        print "----- Hostility Track disabled"
+        print("----- Hostility Track disabled")
         
 ########### Serenity  ##### 
     
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         serenity_track.set_volume(volume_set)
-        print "Serenity Track Volume Set to:"
-        print volume_set
+        print("Serenity Track Volume Set to:")
+        print(volume_set)
     else:
         serenity_track.set_volume(0.0)
-        print "----- Serenity Track disabled"     
+        print("----- Serenity Track disabled")
        
 ########### Guilty  ##### 
     
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         guilty_track.set_volume(volume_set)
-        print "Guilty Track Volume Set to:"
-        print volume_set
+        print("Guilty Track Volume Set to:")
+        print(volume_set)
     else:
         guilty_track.set_volume(0.0)
-        print "----- Guilty Track disabled"
+        print("----- Guilty Track disabled")
 
 ########### Positivity  ##### 
     
     if Randomizer(irand) > .6:
         volume_set = Randomizer(irand)
         positivity_track.set_volume(volume_set)
-        print "Positivity Track Volume Set to:"
-        print volume_set
+        print("Positivity Track Volume Set to:")
+        print(volume_set)
     else:
         positivity_track.set_volume(0.0)
-        print "----- Positivity Track disabled" 
+        print("----- Positivity Track disabled")
     
     time.sleep(16)
 

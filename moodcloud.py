@@ -309,8 +309,6 @@ def get_ip(server_url):
     req = urllib2.Request(server_url+"register")
     req.add_header('Content-Type', 'application/json')
     response = urllib2.urlopen(req, json.dumps({'ip':ip}))
-    print response.read()
-
     return ip
 
 def server():
@@ -349,7 +347,7 @@ def server():
                 lcd.message('%s' % (ip))
         else:
             if 'search_term' in data['fields']:
-                print "Search Term: %s" % data['fields']['search_term']
+                logger.debug("Search Term: %s" % (data['fields']['search_term']))
 
         logger.debug("Playing sounds...")
         moods = dict()
