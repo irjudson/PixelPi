@@ -38,3 +38,4 @@ pip-log.txt
 /moodcloud/web.config
 /moodcloud/fetchjob.zip
 *.sqlite3-journal
+moodcloud/moodcloud/settings.py
