@@ -1,10 +1,6 @@
 .ledstrip {
     display: block;
     float: left;
-    /*
-    background-color: #aaa;
-    border: 1px solid #888;
-    */
     margin: 1em 0em 0em 1em;
 }
 
@@ -14,14 +10,20 @@
   clear: both;
 }
 
+h3 {
+    color: #000;
+    text-align: center;
+}
+
 .ledlight, .WS2812-led {
     display: block;
     width: 20px;
     height: 20px;
     float: left;
-    border: 1px solid #000;
+    border: 1px solid #A0A0A0;
     background-color: #000;
     border-radius: 50%;
+    margin-bottom: 0.5em;
 }
 
 .LEDBox {
@@ -33,6 +35,7 @@
     display: inline-block;
     border: none;
     background: none;
+    padding-left: -1em; !important
 }
 
 #output {
@@ -41,17 +44,33 @@
 }
 
 .rot-neg-90 {
-    -moz-transform:rotate(-270deg); 
-    -moz-transform-origin: bottom left;
-    -webkit-transform: rotate(-270deg);
-    -webkit-transform-origin: bottom left;
-    -o-transform: rotate(-270deg);
-    -o-transform-origin:  bottom left;
+    line-height: 1.1em;
+    -moz-transform:rotate(270deg); 
+    -moz-transform-origin: top left;
+    -webkit-transform: rotate(270deg);
+    -webkit-transform-origin: top left;
+    -o-transform: rotate(270deg);
+    -o-transform-origin:  top left;
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+                
+#search {
+    margin:0;
+    padding-left:5px;
+    font-size: xx-large;
+    font-weight: 100;
 }
 
 .search-form {
-    width: 100%;
+    padding: 20px 0px 0px 0px;
+}
+
+input[type="text"] {
+    color: #808080;
+    border-style: solid;
+    border-color: #A0A0A0;
+    border-width: 0px 0px 1px 0px;
+    background-color: transparent;
 }
 
 header > h1 {
@@ -68,9 +87,23 @@ header > h4 {
     width: 15px;
     height: 15px;
     float: left;
-    border: 1px solid #000;
+    border: 1px solid #A0A0A0;
     background-color: #000;
     border-radius: 50%;
+}
+
+.circle2 {
+    display: block;
+    width: 30px;
+    height: 30px;
+    float: left;
+    color: #fff;
+    border: 1px solid #7A9298;
+    background-color: #7A9298;
+    border-radius: 50%;
+    text-align: center;
+    font-size: larger;
+    font-weight: 100;
 }
 
 .showing {
@@ -89,4 +122,19 @@ header > h4 {
     margin-bottom: 0px;
     background-image:url(../img/closed.png);
     background-repeat:no-repeat;
+}
+
+.col > strong {
+    color: #000;
+}
+
+.col > p {
+    padding-top: 20px;
+}
+
+#ps_left > dl > dt {
+    padding: 6px;
+}
+#ps_left > dl > dt > a {
+    color: #10C7FF;
 }

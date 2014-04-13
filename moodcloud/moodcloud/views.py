@@ -1,16 +1,20 @@
 # Create your views here.
 from django.template import RequestContext
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
 from django.utils.timezone import utc
 from django.conf import settings
 
+import urllib
 import urllib2
 import json
 import datetime
+import traceback
+
+from twitter import *
 
 import pytz
 import models
@@ -35,64 +39,41 @@ def fetch():
     return result
 
 def do_search(search_term):
-    server_url = "http://whooly.cloudapp.net/"
-    session_cookie = None
+    server_url = "http://whooly.cloudapp.net/api/MoodCloud?term=%s" % urllib.quote_plus(search_term)
 
-    # First we have to retrieve the cookie by GET'ing the whooly home page
-    response = urllib2.urlopen(server_url)
-    if 'Set-Cookie' in response.headers:
-        session_cookie = response.headers['Set-Cookie']
-    else:
-        return None
-
-    # Then using that cookie, we call the AuthorizeCallback to get access to the search
-    request = urllib2.Request(server_url+"/Home/AuthorizeCallback")
-    request.add_header('Cookie', session_cookie)
+    request = urllib2.Request(server_url)
     response = urllib2.urlopen(request)
+    data = response.read()
+    jd = json.loads(data)
+    if jd['topics'] is None:
+        print "failed! (to get search results)"
+        return None
+    result = make_result_from_json(json.loads(data))
+    return result
 
-    print "Calling search...",
-    request = urllib2.Request(server_url+"/Home/MoodCloudSearchResult")
-    request.add_header('Content-Type', 'application/json')
-    request.add_header('Cookie', session_cookie)
-    response2 = urllib2.urlopen(request, json.dumps({'search':search_term}))
-    content = response2.read()
-    print content
-
-    if len(content) > 0:
-        print "Fetching json result from api to verify...",
-        request = urllib2.Request(server_url+"/api/moodcloud")
-        response3 = urllib2.urlopen(request)
-        data = response3.read()
-        print data
-        jd = json.loads(data)
-        print jd
-        if jd['topics'] is None:
-            print "failed! (to get search results)"
-            return None
-        if jd['globals'][1]['searchtext'] == search_term:
-            print "verified!"
-        else:
-            print "failed."
-        result = make_result_from_json(json.loads(data))
-        print "Search Result: ", result
-        return result
-
-    print "No response from API?"
-
-def index(request):
+def home(request):
     context = RequestContext(request)
-    context['IP'] = models.Address.load().network or "Unknown"
-    context['IP_updated'] = models.Address.load().last_updated or "Never updated"
-    return render(request, 'index.html', context)
+    #twitter = Twitter(auth=OAuth(settings.OAUTH_TOKEN, settings.OAUTH_SECRET,
+    #                             settings.CONSUMER_KEY, settings.CONSUMER_SECRET))
+    #trends = twitter.trends._woeid(_woeid = 1)
+    #print trends['results']
+    context['trends'] = None
+    context['recent'] = [x['search_term'] for x in models.Result.objects.exclude(search_term__exact="\"\"").values("search_term").distinct()[:6]]
+    return render(request, 'home.html', context)
 
 @csrf_exempt
 def search(request, search_term):
-    result = do_search(search_term)
-    if result is not None:
-        print "Worked"
-    else:
-        print "Failed"
-    return redirect('index')
+    if not search_term and 'search_term' in request.GET:
+        search_term = request.GET['search_term']
+    if not search_term and 'search' in request.POST:
+        search_term = request.POST['search']
+    if not search_term:
+        return HttpResponseBadRequest()
+    context = RequestContext(request)
+    context['Result'] = do_search(search_term)
+    context['IP'] = models.Address.load().network or "Unknown"
+    context['IP_updated'] = models.Address.load().last_updated or "Never updated"
+    return render(request, 'search_results.html', context)
 
 # Get data from Whoooly
 def fetch_data(request):
@@ -123,6 +104,10 @@ def get_data(request):
             count += 1
     except Exception as e:
         print "Exception: %s" % e.message
+        traceback.print_exc()
+        print count
+        print len(result.topics.all())
+        print len(jd['fields']['topics'])
         jd = {}
     return HttpResponse(json.dumps(jd), mimetype='application/json')
 

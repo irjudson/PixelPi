@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'moodcloud.views.index', name='index'),
+    url(r'^$', 'moodcloud.views.home', name='home'),
     url(r'^data/', 'moodcloud.views.get_data', name='data'),
     url(r'^fetchdata/', 'moodcloud.views.fetch_data', name='data'),
     url(r'^register', 'moodcloud.views.register', name='register'),

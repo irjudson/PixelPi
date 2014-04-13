@@ -130,6 +130,10 @@ INSTALLED_APPS = (
 
 DATA_URL = "http://whooly.cloudapp.net/api/moodcloud"
 UPDATE_FREQUENCY = 5
+CONSUMER_KEY = "WGVuJPCgOSnxWUoVgsaSjTi3W";
+CONSUMER_SECRET = "5bmQ5BVYjVqI5QIK50W0GlaYmKgaijhSadLzH5Vy7fliqvwEGP";
+OAUTH_TOKEN = "2433237871-FKlZpQtnloEL4zgccb0hZi8T8iggdTY0JwyjqM1";
+OAUTH_SECRET = "9lB3khbySNk6aM4s5GD2n1YQpy5IRiRNLo2idKGF0Bj7b";
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

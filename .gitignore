@@ -36,3 +36,5 @@ pip-log.txt
 *.suo
 /moodcloud/moodcloud/static/js
 /moodcloud/web.config
+/moodcloud/fetchjob.zip
+*.sqlite3-journal
