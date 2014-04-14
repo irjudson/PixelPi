@@ -1,94 +1,89 @@
 <!doctype html>
 <html>
-<head>
-  {% load staticfiles %}
-  <meta charset='utf-8'>
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet.css' %}" media="screen" />
-  <link rel="stylesheet" type="text/css" href="{% static 'css/col.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'css/2cols.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'css/flaticon.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'css/ledstrip.css' %}" />
-  <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+    <head>
+      {% load staticfiles %}
+      <meta charset='utf-8'>
+      <meta http-equiv="X-UA-Compatible" content="chrome=1">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet.css' %}" media="screen" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/col.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/2cols.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/flaticon.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/ledstrip.css' %}" />
+      <!--[if lt IE 9]>
+          <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
 
-  <title>MoodCloud</title>
-</head>
+      <title>MoodCloud</title>
+    </head>
 
-<body>
-    <div id="container">
+    <body>
+        <div id="content" class="wrapper">
+            <header>
+                <h1>moodcloud</h1>
+                <h4>Audio Visual Sentiment Art Installation</h4>
+            </header>
 
-    <div class="inner">
-        <header>
-        <h1>moodcloud</h1>
-        <h4>Audio Visual Sentiment Art Installation</h4>
-        </header>
-
-        <div id="content">
-        <div id="explanation" class="section group">
-            <div class="col circle2" style="float: left">1</div>
-            <div class="col" style="width: 93%; float: right">
-            <strong>SEARCH THE CLOUD</strong>
-            <p>Search for something below and the moodcloud will find the most active topics around your search term. You can then listen to a live emotion-focused cloud-activated composition and watch the activity of those topics over time.</p>
-            <form class="search-form" action="/search/" method="post">
-                {% csrf_token %}
-                <input name="search" id="search" type="text" placeholder="type to search">
-                <i class="flaticon-magnifier5" style="width: 5%"></i>
-            </form>
-            </div>
-        </div>
-        <div id="choices"  class="section group">
-            <div class="col circle2" style="float: left">2</div>
-            <div class="col" style="width: 93%; float: right">
-            <strong>OR CHOOSE FROM PREVIOUS SEARCHES OR TRENDING TOPICS ON TWITTER</strong>
-            <p></p>
-            <div id="previous_searches" class="col" style="width: 48%;float: left">
-                <span><i class="flaticon-magnifier5" style="padding-right: 10px"></i>Previous searches</span>
-                <div id="ps_left" class="col" style="width: 48%;float: left">
-                <dl>
-                    {% for psi in recent|slice:":3" %}
-                    <dt><a href="/search/?search_term={{psi|iriencode}}">{{psi}}</a></dt>
-                    {% endfor %}
-                </dl>
-                </div>
-                <div id="ps_left" class="col" style="width: 48%;float: right">
-                <dl>
-                    {% for psi in recent|slice:"3:" %}
-                    <dt><a href="/search/?search_term={{psi|iriencode}}">{{psi}}</a></dt>
-                    {% endfor %}
-                </dl>                        
+            <div id="explanation" class="section group">
+                <div class="col circle2" style="float: left">1</div>
+                <div class="col" style="width: 93%; float: right">
+                    <strong>SEARCH THE CLOUD</strong>
+                    <p>Search for something below and the moodcloud will find the most active topics around your search term. You can then listen to a live emotion-focused cloud-activated composition and watch the activity of those topics over time.</p>
+                    <form class="search-form" action="/search/" method="post">
+                        {% csrf_token %}
+                        <input name="search" id="search" type="text" placeholder="type to search">
+                        <i class="flaticon-magnifier5" style="width: 5%"></i>
+                    </form>
                 </div>
             </div>
-            <div id="trending_topics"  class="col" style="width: 48%;float: right">
-                <i class="flaticon-twitter13" style="padding-right: 10px"></i>Trending topics
-                <div id="tt_left" class="col" style="width: 48%;float: left">
-                <dl>
-                    {% for tt in trends|slice:":3" %}
-                    <dt><a href="/search/?search_term={{tt}}">{{tt}}</a></dt>
-                    {% endfor %}
-                </dl>
-                </div>
-                <div id="tt_left" class="col" style="width: 48%;float: right">
-                <dl>
-                    {% for tt in trends|slice:"3:" %}
-                    <dt><a href="/search/?search_term={{tt}}">{{tt}}</a></dt>
-                    {% endfor %}
-                </dl>                        
+            <div id="choices"  class="section group">
+                <div class="col circle2" style="float: left">2</div>
+                <div class="col" style="width: 93%; float: right">
+                    <strong>OR CHOOSE FROM PREVIOUS SEARCHES OR TRENDING TOPICS ON TWITTER</strong>
+                    <div id="previous_searches" class="col" style="width: 48%;float: left">
+                        <span><i class="flaticon-magnifier5" style="padding-right: 10px"></i>Previous searches</span>
+                        <div id="ps_left" class="col" style="width: 48%;float: left">
+                            <dl>
+                                {% for psi in recent|slice:":3" %}
+                                  <dt><a href="/search/?search_term={{psi|iriencode}}">{{psi}}</a></dt>
+                                {% endfor %}
+                            </dl>
+                        </div>
+                        <div id="ps_left" class="col" style="width: 48%;float: right">
+                            <dl>
+                                {% for psi in recent|slice:"3:" %}
+                                    <dt><a href="/search/?search_term={{psi|iriencode}}">{{psi}}</a></dt>
+                                {% endfor %}
+                            </dl>                        
+                        </div>
+                    </div>
+                    <div id="trending_topics"  class="col" style="width: 48%;float: right">
+                        <i class="flaticon-twitter13" style="padding-right: 10px"></i>Trending topics
+                        <div id="tt_left" class="col" style="width: 48%;float: left">
+                            <dl>
+                                {% for tt in trends|slice:":3" %}
+                                    <dt><a href="/search/?search_term={{tt}}">{{tt}}</a></dt>
+                                {% endfor %}
+                            </dl>
+                        </div>
+                        <div id="tt_left" class="col" style="width: 48%;float: right">
+                            <dl>
+                                {% for tt in trends|slice:"3:" %}
+                                    <dt><a href="/search/?search_term={{tt}}">{{tt}}</a></dt>
+                                {% endfor %}
+                            </dl>                        
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-        </div>
+            <div class="push"></div>
         </div>
 
         <footer>
-        <div class="technical_info">
-            <span id="ipaddr" style="font-size:x-small">MoodCloud IP: {{IP}}</span>
-            <span id="mcip_updated" style="font-size:xx-small;font-style:italic">Last seen: {{IP_updated}}</span>
-        </div>
-        <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by <a href="http://www.wesense.co/">Melissa Quintanilha</a>, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, Shelly Farnham and Christopher Rampey.
+            <div class="technical_info">
+                <span id="ipaddr" style="font-size:x-small">MoodCloud IP: {{IP}}</span>
+                <span id="mcip_updated" style="font-size:xx-small;font-style:italic">Last seen: {{IP_updated}}</span>
+            </div>
+            <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by <a href="http://www.wesense.co/">Melissa Quintanilha</a>, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, Shelly Farnham and Christopher Rampey.
         </footer>
-    </div>
-    </div>
-</body>
+    </body>
 </html>

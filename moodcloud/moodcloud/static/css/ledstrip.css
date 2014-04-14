@@ -35,23 +35,12 @@ h3 {
     display: inline-block;
     border: none;
     background: none;
-    padding-left: -1em; !important
+    padding-left: -1em !important;
 }
 
 #output {
   clear: left;
   margin-top: 1em;
-}
-
-.rot-neg-90 {
-    line-height: 1.1em;
-    -moz-transform:rotate(270deg); 
-    -moz-transform-origin: top left;
-    -webkit-transform: rotate(270deg);
-    -webkit-transform-origin: top left;
-    -o-transform: rotate(270deg);
-    -o-transform-origin:  top left;
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 }
                 
 #search {
