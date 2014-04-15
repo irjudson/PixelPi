@@ -10,6 +10,11 @@
   clear: both;
 }
 
+.ledstrip > br {
+    height: 1em;
+    width: 1em;
+}
+
 h3 {
     color: #000;
     text-align: center;
@@ -19,11 +24,9 @@ h3 {
     display: block;
     width: 20px;
     height: 20px;
-    float: left;
     border: 1px solid #A0A0A0;
     background-color: #000;
     border-radius: 50%;
-    margin-bottom: 0.5em;
 }
 
 .LEDBox {
@@ -62,6 +65,16 @@ input[type="text"] {
     background-color: transparent;
 }
 
+.home_header {
+  background: url('../img/Header.png') no-repeat top;
+  height: 260px;
+}
+
+.results_home_header {
+  background: url('../img/Header_Cloud.png') no-repeat top;
+  height: 356px;
+}
+
 header > h1 {
     text-align: center;
 }
@@ -69,6 +82,11 @@ header > h1 {
 header > h4 {
     text-align: right;
     font-weight: 100;
+}
+
+#back_home > a {
+    color: #A0A0A0;
+    text-decoration: none;
 }
 
 .circle {
@@ -115,6 +133,7 @@ header > h4 {
 
 .col > strong {
     color: #000;
+    padding-bottom: 35px;
 }
 
 .col > p {

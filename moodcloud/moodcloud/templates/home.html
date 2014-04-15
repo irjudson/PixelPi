@@ -17,30 +17,30 @@
     </head>
 
     <body>
-        <div id="content" class="wrapper">
-            <header>
-                <h1>moodcloud</h1>
-                <h4>Audio Visual Sentiment Art Installation</h4>
-            </header>
+        <header class="home_header"></header>
 
+        <div id="content" class="wrapper">
             <div id="explanation" class="section group">
-                <div class="col circle2" style="float: left">1</div>
-                <div class="col" style="width: 93%; float: right">
+                <img src="{% static 'img/01.png' %}">
+                <div class="col" style="width: 90%; float: right">
                     <strong>SEARCH THE CLOUD</strong>
                     <p>Search for something below and the moodcloud will find the most active topics around your search term. You can then listen to a live emotion-focused cloud-activated composition and watch the activity of those topics over time.</p>
                     <form class="search-form" action="/search/" method="post">
                         {% csrf_token %}
-                        <input name="search" id="search" type="text" placeholder="type to search">
-                        <i class="flaticon-magnifier5" style="width: 5%"></i>
+                        <input name="search" id="search" type="text" placeholder="type to search" style="width: 80%">
+                        <img src="{% static 'img/Button_Search-Inactive.png' %}" width="5%">
                     </form>
                 </div>
             </div>
+            <br/>
             <div id="choices"  class="section group">
-                <div class="col circle2" style="float: left">2</div>
-                <div class="col" style="width: 93%; float: right">
-                    <strong>OR CHOOSE FROM PREVIOUS SEARCHES OR TRENDING TOPICS ON TWITTER</strong>
+                <img src="{% static 'img/02.png' %}">
+                <div class="col" style="width: 90%; float: right">
+                    <strong style="padding-bottom: 20px;">OR CHOOSE FROM PREVIOUS SEARCHES OR TRENDING TOPICS ON TWITTER</strong>
                     <div id="previous_searches" class="col" style="width: 48%;float: left">
-                        <span><i class="flaticon-magnifier5" style="padding-right: 10px"></i>Previous searches</span>
+                        <div id="ps_hdr">
+                            <img src="{% static 'img/Icon_PreviousSearches.png' %}">&nbsp;&nbsp;Previous searches
+                        </div>
                         <div id="ps_left" class="col" style="width: 48%;float: left">
                             <dl>
                                 {% for psi in recent|slice:":3" %}
@@ -57,7 +57,9 @@
                         </div>
                     </div>
                     <div id="trending_topics"  class="col" style="width: 48%;float: right">
-                        <i class="flaticon-twitter13" style="padding-right: 10px"></i>Trending topics
+                        <div id="tt_hdr">
+                            <img src="{% static 'img/Icon_TwitterTrendingTopics.png' %}">&nbsp;&nbsp;Trending topics
+                        </div>
                         <div id="tt_left" class="col" style="width: 48%;float: left">
                             <dl>
                                 {% for tt in trends|slice:":3" %}
@@ -75,9 +77,11 @@
                     </div>
                 </div>
             </div>
+<!--
             <div class="push"></div>
+-->
         </div>
-
+<!--
         <footer>
             <div class="technical_info">
                 <span id="ipaddr" style="font-size:x-small">MoodCloud IP: {{IP}}</span>
@@ -85,5 +89,6 @@
             </div>
             <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by <a href="http://www.wesense.co/">Melissa Quintanilha</a>, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, Shelly Farnham and Christopher Rampey.
         </footer>
+-->
     </body>
 </html>
