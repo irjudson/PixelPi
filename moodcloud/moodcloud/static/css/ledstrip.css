@@ -57,12 +57,16 @@ h3 {
     padding: 20px 0px 0px 0px;
 }
 
-input[type="text"] {
-    color: #808080;
+input[type="search"] {
+    color: #9b9b9b;
     border-style: solid;
     border-color: #A0A0A0;
     border-width: 0px 0px 1px 0px;
     background-color: transparent;
+}
+
+input[type="search"]:focus { 
+    color: #10c7ff;
 }
 
 .home_header {
@@ -71,8 +75,8 @@ input[type="text"] {
 }
 
 .results_home_header {
-  background: url('../img/Header_Cloud.png') no-repeat top;
-  height: 356px;
+  background: url('../img/Header_Cloud2.png') no-repeat top;
+  height: 300px;
 }
 
 header > h1 {
@@ -144,5 +148,5 @@ header > h4 {
     padding: 6px;
 }
 #ps_left > dl > dt > a {
-    color: #10C7FF;
+    color: #10c7ff;
 }

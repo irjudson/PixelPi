@@ -58,7 +58,7 @@ def home(request):
     #trends = twitter.trends._woeid(_woeid = 1)
     #print trends['results']
     context['trends'] = None
-    context['recent'] = [x['search_term'] for x in models.Result.objects.exclude(search_term__exact="\"\"").values("search_term").distinct()[:6]]
+    context['recent'] = [x.search_term for x in models.Result.objects.order_by('-created_at')[:6]]
     return render(request, 'home.html', context)
 
 @csrf_exempt

@@ -12,6 +12,7 @@
       <!--[if lt IE 9]>
           <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
       <![endif]-->
+      <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
       <title>MoodCloud</title>
     </head>
@@ -27,8 +28,8 @@
                     <p>Search for something below and the moodcloud will find the most active topics around your search term. You can then listen to a live emotion-focused cloud-activated composition and watch the activity of those topics over time.</p>
                     <form class="search-form" action="/search/" method="post">
                         {% csrf_token %}
-                        <input name="search" id="search" type="text" placeholder="type to search" style="width: 80%">
-                        <img src="{% static 'img/Button_Search-Inactive.png' %}" width="5%">
+                        <input name="search" id="search" type="search" value="" placeholder="type to search" style="width: 80%;vertical-align: middle">
+                        <input type="image" src="{% static 'img/Button_Search-Inactive.png' %}" alt="Search button" width="5%" style="vertical-align: middle;padding-left: 5px">
                     </form>
                 </div>
             </div>
@@ -90,5 +91,23 @@
             <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by <a href="http://www.wesense.co/">Melissa Quintanilha</a>, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, Shelly Farnham and Christopher Rampey.
         </footer>
 -->
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("input[type=search]").bind("blur", function (event) {
+                         $(this).next()[0].src = "/static/img/Button_Search-Inactive.png";
+                    });
+                $("input[type=search]").bind("focus", function (event) {
+                         $(this).next()[0].src = "/static/img/Button_Search-Active.png";
+                    });
+                $("input[type=search]").on("input", function (event) {
+                    if ($(this).val().length > 0) {
+                        $(this).next()[0].disabled = false;
+                    } else {
+                        $(this).next()[0].disabled = true;
+                    }
+                    console.log($(this).val());
+                });
+            });
+        </script>
     </body>
 </html>
