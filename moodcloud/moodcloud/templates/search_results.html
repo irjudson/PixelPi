@@ -27,31 +27,65 @@
                 <div style="text-align: center">
                     <a href="/">
                         <img src="{% static 'img/Button_Back.png' %}">
-                        <p style="font-size: small"><strong>SEARCH<br/>AGAIN?</strong></p>
+                        <p><strong>SEARCH AGAIN?</strong></p>
                     </a>
                 </div>
             </div>
 
-            <header class="results_home_header"></header>
+            <header class="results_home_header"><h2 style="font-variant: small-caps">ON: "{{Result.search_term}}"</h2></header>
 
             <div class="LEDBox">
                 <div class="simulation">
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
-                    <div class="ledstrip"></div>
+                    <div class="ledstrip">1</div>
+                    <div class="ledstrip">2</div>
+                    <div class="ledstrip">3</div>
+                    <div class="ledstrip">4</div>
+                    <div class="ledstrip">5</div>
+                    <div class="ledstrip">6</div>
+                    <div class="ledstrip">7</div>
+                    <div class="ledstrip">8</div>
+                    <div class="ledstrip">9</div>
+                    <div class="ledstrip">10</div>
+                    <div class="ledstrip">11</div>
+                    <div class="ledstrip">12</div>
+                    <div class="ledstrip">13</div>
+                    <div class="ledstrip">14</div>
+                    <div class="ledstrip">15</div>
+                    <div class="ledstrip">16</div>
+                </div>
+            </div>
+            <div id="topic_list" style="text-align: center">
+                <div style="width: 25%;float:left">
+                    <ol start="1" style="text-align: left">
+                        <li><a href="">{{Result.topics.all.0.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.1.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.2.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.3.topic}}</a></li>
+                    </ol>
+                </div>
+                <div style="width: 25%;float:left">
+                    <ol start="5" style="text-align: left">
+                        <li><a href="">{{Result.topics.all.4.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.5.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.6.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.7.topic}}</a></li>
+                    </ol>
+                </div>
+                <div style="width: 25%;float:left">
+                    <ol start="9" style="text-align: left">
+                        <li><a href="">{{Result.topics.all.8.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.9.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.10.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.11.topic}}</a></li>
+                    </ol>
+                </div>
+                <div style="width: 25%;float:left">
+                    <ol start="13" style="text-align: left">
+                        <li><a href="">{{Result.topics.all.12.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.13.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.14.topic}}</a></li>
+                        <li><a href="">{{Result.topics.all.15.topic}}</a></li>
+                    </ol>
                 </div>
             </div>
             <div>
@@ -71,20 +105,9 @@
                 <div style="width:25%;float: left">
                     <div><div class="circle" style="background-color: #E06B0A"></div>&nbsp;<span style="color:#E06B0A;float:left;line-height:18px;margin-left:5px;vertical-align:middle">Guilt</span></div>
                 </div>
-<!--
-                <div class="push"></div>
--->
             </div>
         </div>
-<!--
-        <footer>
-            <div class="technical_info">
-                <span id="ipaddr" style="font-size:x-small">MoodCloud IP: {{IP}}</span>
-                <span id="mcip_updated" style="font-size:xx-small;font-style:italic">Last seen: {{IP_updated}}</span>
-            </div>
-            <a href="https://github.com/irjudson/moodcloud">MoodCloud</a> is maintained by <a href="http://www.wesense.co/">Melissa Quintanilha</a>, <a href="http://www.irjudson.org/">Ivan R. Judson</a>, Jaime Teevan, Shelly Farnham and Christopher Rampey.
-        </footer> 
--->      
+
         <script type="text/javascript">
             var strip = new Array();
             var animation = new Array(); // need to be global

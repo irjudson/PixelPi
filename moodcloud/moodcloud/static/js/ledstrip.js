@@ -10,199 +10,196 @@
  */
 
 var LEDstrip = function LEDstrip(el, stripsize, direction) {
-	/**
-	 * private variables
-	 */
+    /**
+     * private variables
+     */
 
-	/**
-	 * reference to an LED object representing the WS2811/WS2812 module
-	 */
-	var _LED = {};
+    /**
+     * reference to an LED object representing the WS2811/WS2812 module
+     */
+    var _LED = {};
 
-	/**
-	 * new-less constructor
-	 * http://jfire.io/blog/2013/03/20/newless-javascript/
-	 */
-	if (! (this instanceof LEDstrip)) return new LEDstrip(el, stripsize, direction);
+    /**
+     * new-less constructor
+     * http://jfire.io/blog/2013/03/20/newless-javascript/
+     */
+    if (! (this instanceof LEDstrip)) return new LEDstrip(el, stripsize, direction);
 
-	/* NOP console.log shim if real console object is not available */
-	if (typeof console === "undefined") {
-		console = {};
-		console.log = function() {};
-		console.debug = console.log;
-		console.warn = console.log;
-	}
+    /* NOP console.log shim if real console object is not available */
+    if (typeof console === "undefined") {
+        console = {};
+        console.log = function() {};
+        console.debug = console.log;
+        console.warn = console.log;
+    }
 
-	/**
-	 * private methods
-	 */
-	function _addlights(lights, count) {
-		/**
-		 * add new lights
-		 */
-		var i;
-		var j = lights.length;
-		var light;
+    /**
+     * private methods
+     */
+    function _addlights(lights, count) {
+        /**
+         * add new lights
+         */
+        var i;
+        var j = lights.length;
+        var light;
 
-		for (i = 0; i < count; ++i) {
-			light = WS2812(); // new LED instance
-			// console.log(light.elem);
-	    	this.elem.appendChild(light.elem); // Add LED element to DOM as child of strip element
-	    	if (this.direction === "vertical") {
-	    		this.elem.appendChild(document.createElement("br"));
-	    	}
-			lights.push(light); // add LED to strip's lights array
-			if (j > 0) {
-				lights[j-1].next = lights[j]; // previous chains to current
-			}
-			++j;
-		}
+        for (i = 0; i < count; ++i) {
+            light = WS2812(); // new LED instance
+            // console.log(light.elem);
+            this.elem.appendChild(light.elem); // Add LED element to DOM as child of strip element
+            lights.push(light); // add LED to strip's lights array
+            if (j > 0) {
+                lights[j-1].next = lights[j]; // previous chains to current
+            }
+            ++j;
+        }
 
-		return count;
-	}
+        return count;
+    }
 
-	function _removelights(lights, count) {
-		/**
-		 * remove lights from end of strip
-		 */
-		var i = 0, j = lights.length;
-		var light;
-		if (count > j) count = j; // can't remove more lights than we have!
-		if (count <= 0) return; // nothing to do!
+    function _removelights(lights, count) {
+        /**
+         * remove lights from end of strip
+         */
+        var i = 0, j = lights.length;
+        var light;
+        if (count > j) count = j; // can't remove more lights than we have!
+        if (count <= 0) return; // nothing to do!
 
-		for (i = count; i >= 0; --i) {
-			light = lights.pop(); // remove last element from lights array
-			if (this.direction === "vertical") {
-				light.elem.parentNode.removeChild("<br/>");
-			}
-			light.elem.parentNode.removeChild(light.elem); // remove DOM element from parent
-			light.next = undefined; // dereference any old light pointers
-			light.elem = undefined; // dereference DOM element
-		}
+        for (i = count; i >= 0; --i) {
+            light = lights.pop(); // remove last element from lights array
+            if (this.direction === "vertical") {
+                light.elem.parentNode.removeChild("<br/>");
+            }
+            light.elem.parentNode.removeChild(light.elem); // remove DOM element from parent
+            light.next = undefined; // dereference any old light pointers
+            light.elem = undefined; // dereference DOM element
+        }
 
-		if (lights.length) {
-			lights[lights.length - 1].next = undefined; // terminate strip
-		}
+        if (lights.length) {
+            lights[lights.length - 1].next = undefined; // terminate strip
+        }
 
-		return count;
-	}
+        return count;
+    }
 
-	/**
-	 * public properties
-	 */
-	this.buffer = []; 	// array of [r,g,b] triplets
-	this.elem = {};		// HTML element to inject light elements into
-	this.lights = [];	// array of HTML light elements (DOM)
+    /**
+     * public properties
+     */
+    this.buffer = []; 	// array of [r,g,b] triplets
+    this.elem = {};		// HTML element to inject light elements into
+    this.lights = [];	// array of HTML light elements (DOM)
 
-	/**
-	 * public methods
-	 */
-	function attach(el) {
-		this.elem = el || document.createElement('div');
+    /**
+     * public methods
+     */
+    function attach(el) {
+        this.elem = el || document.createElement('div');
 
-		return this;
-	}
+        return this;
+    }
 
-	/**
-	 * Add or remove lights to set the desired length
-	 */
-	function setsize(count) {
-		var cursize = this.lights.length;
-		if (count > cursize) {
-			_addlights.bind(this)(this.lights, count - cursize);
-		} else if (count < cursize) {
-			_removelights.bind(this)(this.lights, cursize - count);
-		}
+    /**
+     * Add or remove lights to set the desired length
+     */
+    function setsize(count) {
+        var cursize = this.lights.length;
+        if (count > cursize) {
+            _addlights.bind(this)(this.lights, count - cursize);
+        } else if (count < cursize) {
+            _removelights.bind(this)(this.lights, cursize - count);
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	function pushrgb(color) {
-		if (this.lights[0] && this.lights[0].datain) {
-			this.lights[0].datain.bind(this.lights[0])(color);
-		} else {
-			console.log("ERR: No lights defined.");
-		}
+    function pushrgb(color) {
+        if (this.lights[0] && this.lights[0].datain) {
+            this.lights[0].datain.bind(this.lights[0])(color);
+        } else {
+            console.log("ERR: No lights defined.");
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	/**
-	 * After loading the buffer with color values, call latch() to 
-	 * update the lights to the new colors.
-	 */
-	function latch() {
-		if (this.lights[0] && this.lights[0].latch) {
-			this.lights[0].latch();
-		} else {
-			console.log("ERR: No lights defined.");
-		}
+    /**
+     * After loading the buffer with color values, call latch() to 
+     * update the lights to the new colors.
+     */
+    function latch() {
+        if (this.lights[0] && this.lights[0].latch) {
+            this.lights[0].latch();
+        } else {
+            console.log("ERR: No lights defined.");
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	/**
-	 * Push all of the color values from the buffer into the lights,
-	 * sequentially, then latch to display the new values.
-	 */
-	function send() {
-		var pushrgb = this.pushrgb.bind(this); // capture scope
-		this.buffer.forEach(function(val){pushrgb(val);});
+    /**
+     * Push all of the color values from the buffer into the lights,
+     * sequentially, then latch to display the new values.
+     */
+    function send() {
+        var pushrgb = this.pushrgb.bind(this); // capture scope
+        this.buffer.forEach(function(val){pushrgb(val);});
 
-		this.latch();
+        this.latch();
 
-		return this;
-	}
+        return this;
+    }
 
-	function clear() {
-		var buff = this.buffer;
-		this.buffer.forEach(function(val, idx) {
-			buff[idx] = [0,0,0];
-		});
+    function clear() {
+        var buff = this.buffer;
+        this.buffer.forEach(function(val, idx) {
+            buff[idx] = [0,0,0];
+        });
 
-		this.send();
+        this.send();
 
-		return this;
-	}
+        return this;
+    }
 
-	/**
-	 * Load the buffer with values. Mainly provided for chaining purposes.
-	 *
-	 */
-	function setcolors(buf) {
-		this.buffer = buf.valueOf();
+    /**
+     * Load the buffer with values. Mainly provided for chaining purposes.
+     *
+     */
+    function setcolors(buf) {
+        this.buffer = buf.valueOf();
 
-		return this;
-	}
+        return this;
+    }
 
-	/**
-	 * getter for the size of the LED strip
-	 */
-	function size() {
-		return this.lights.length;
-	}
+    /**
+     * getter for the size of the LED strip
+     */
+    function size() {
+        return this.lights.length;
+    }
 
-	/**
-	 * Make these methods public
-	 */
-	this.attach = attach;
-	this.setsize = setsize;
-	this.pushrgb = pushrgb;
-	this.latch = latch;
-	this.send = send;
-	this.clear = clear;
-	this.setcolors = setcolors;
-	this.size = size;
+    /**
+     * Make these methods public
+     */
+    this.attach = attach;
+    this.setsize = setsize;
+    this.pushrgb = pushrgb;
+    this.latch = latch;
+    this.send = send;
+    this.clear = clear;
+    this.setcolors = setcolors;
+    this.size = size;
 
-	if (el && el instanceof Node) {
-		this.attach(el);
-	}
+    if (el && el instanceof Node) {
+        this.attach(el);
+    }
 
-	this.direction = direction || "horizontal";
+    this.direction = direction || "horizontal";
 
-	if (stripsize > 0) {
-		this.setsize(stripsize);
-	}
+    if (stripsize > 0) {
+        this.setsize(stripsize);
+    }
 
-	return this;
+    return this;
 };

@@ -73,7 +73,7 @@ def home(request):
          if x.search_term.lower() not in terms:
              terms.append(x.search_term.lower())
              count += 1
-         if count > 3:
+         if count > 2:
              break
     context['recent'] = [x.capitalize() for x in terms]
     return render(request, 'home.html', context)
