@@ -113,11 +113,8 @@ def get_data(request):
     except Exception as e:
         print "Exception: %s" % e.message
         traceback.print_exc()
-        print count
-        print len(result.topics.all())
-        print len(jd['fields']['topics'])
         jd = {}
-    return HttpResponse(json.dumps(jd), mimetype='application/json')
+    return HttpResponse(json.dumps(jd), content_type='application/json')
 
 @csrf_exempt
 def register(request):
