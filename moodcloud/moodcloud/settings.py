@@ -14,6 +14,18 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'moodcloud',
+        'USER': 'moodcloud',
+        'PASSWORD': 'M00dCl0ud',
+        'HOST': 'ogpb12p5be.database.windows.net',
+        'PORT': '',
+        'OPTIONS': {
+            'driver': 'SQL Server Native Client 11.0',
+            'MARS_Connection': True,
+        },
+    },
+    'default2': {
         'ENGINE': 'django.db.backends.sqlite3',                 # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': path.join(PROJECT_ROOT, 'moodcloud.sqlite3'),   # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
