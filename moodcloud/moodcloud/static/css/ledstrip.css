@@ -150,3 +150,10 @@ header > h4 {
 #ps_left > dl > dt > a {
     color: #10c7ff;
 }
+
+#tt_left > dl > dt {
+    padding: 6px;
+}
+#tt_left > dl > dt > a {
+    color: #10c7ff;
+}

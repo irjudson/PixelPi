@@ -14,7 +14,7 @@ import json
 import datetime
 import traceback
 
-from twitter import *
+from twitter import Twitter, OAuth
 
 import pytz
 import models
@@ -53,18 +53,27 @@ def do_search(search_term):
 
 def home(request):
     context = RequestContext(request)
-    #twitter = Twitter(auth=OAuth(settings.OAUTH_TOKEN, settings.OAUTH_SECRET,
-    #                             settings.CONSUMER_KEY, settings.CONSUMER_SECRET))
-    #trends = twitter.trends._woeid(_woeid = 1)
-    #print trends['results']
-    context['trends'] = None
+    context['trends'] = list()
+    context['recent'] = list()
+    try:
+        twitter = Twitter(auth=OAuth(settings.OAUTH_TOKEN, settings.OAUTH_SECRET,
+                                     settings.CONSUMER_KEY, settings.CONSUMER_SECRET))
+        for t in [x['name'] for x in twitter.trends.place(_id="1")[0]['trends']][:4]:
+            print "Trending: %s" % t
+            if t[0] == "#":
+                context['trends'].append(t[1:])
+            else:
+                context['trends'].append(t)
+    except Exception as e:
+        print e
+
     terms = list()
     count = 0
     for x in models.Result.objects.all():
          if x.search_term.lower() not in terms:
              terms.append(x.search_term.lower())
              count += 1
-         if count > 5:
+         if count > 3:
              break
     context['recent'] = [x.capitalize() for x in terms]
     return render(request, 'home.html', context)

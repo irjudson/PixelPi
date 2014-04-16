@@ -44,17 +44,10 @@
                         </div>
                         <div id="ps_left" class="col" style="width: 48%;float: left">
                             <dl>
-                                {% for psi in recent|slice:":3" %}
+                                {% for psi in recent %}
                                   <dt><a href="/search/?search_term={{psi|iriencode}}">{{psi}}</a></dt>
                                 {% endfor %}
                             </dl>
-                        </div>
-                        <div id="ps_left" class="col" style="width: 48%;float: right">
-                            <dl>
-                                {% for psi in recent|slice:"3:" %}
-                                    <dt><a href="/search/?search_term={{psi|iriencode}}">{{psi}}</a></dt>
-                                {% endfor %}
-                            </dl>                        
                         </div>
                     </div>
                     <div id="trending_topics"  class="col" style="width: 48%;float: right">
@@ -63,17 +56,10 @@
                         </div>
                         <div id="tt_left" class="col" style="width: 48%;float: left">
                             <dl>
-                                {% for tt in trends|slice:":3" %}
-                                    <dt><a href="/search/?search_term={{tt}}">{{tt}}</a></dt>
+                                {% for tt in trends %}
+                                    <dt><a href="/search/?search_term={{tt|iriencode}}">{{tt}}</a></dt>
                                 {% endfor %}
                             </dl>
-                        </div>
-                        <div id="tt_left" class="col" style="width: 48%;float: right">
-                            <dl>
-                                {% for tt in trends|slice:"3:" %}
-                                    <dt><a href="/search/?search_term={{tt}}">{{tt}}</a></dt>
-                                {% endfor %}
-                            </dl>                        
                         </div>
                     </div>
                 </div>
