@@ -58,7 +58,15 @@ def home(request):
     #trends = twitter.trends._woeid(_woeid = 1)
     #print trends['results']
     context['trends'] = None
-    context['recent'] = [x.search_term for x in models.Result.objects.order_by('-created_at')[:6]]
+    terms = list()
+    count = 0
+    for x in models.Result.objects.all():
+         if x.search_term.lower() not in terms:
+             terms.append(x.search_term.lower())
+             count += 1
+         if count > 5:
+             break
+    context['recent'] = [x.capitalize() for x in terms]
     return render(request, 'home.html', context)
 
 @csrf_exempt
