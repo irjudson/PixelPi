@@ -13,6 +13,7 @@ import urllib2
 import json
 import datetime
 import traceback
+import random
 
 from twitter import Twitter, OAuth
 
@@ -51,22 +52,24 @@ def do_search(search_term):
     result = make_result_from_json(json.loads(data))
     return result
 
-def home(request):
-    context = RequestContext(request)
-    context['trends'] = list()
-    context['recent'] = list()
+def get_twitter_trending_topics():
+    trending_topics = list()
     try:
         twitter = Twitter(auth=OAuth(settings.OAUTH_TOKEN, settings.OAUTH_SECRET,
                                      settings.CONSUMER_KEY, settings.CONSUMER_SECRET))
         for t in [x['name'] for x in twitter.trends.place(_id="1")[0]['trends']][:4]:
-            print "Trending: %s" % t
             if t[0] == "#":
-                context['trends'].append(t[1:])
+                trending_topics.append(t[1:])
             else:
-                context['trends'].append(t)
+                trending_topics.append(t)
     except Exception as e:
         print e
+    return trending_topics
 
+def home(request):
+    context = RequestContext(request)
+    context['trends'] = get_twitter_trending_topics()
+    context['recent'] = list()
     terms = list()
     count = 0
     for x in models.Result.objects.all():
@@ -103,13 +106,24 @@ def fetch_data(request):
 def get_data(request):
     result = None
     try:
-        diff =  pytz.utc.localize( datetime.datetime.utcnow() ) - models.Result.objects.latest().created_at
-        if models.Result.objects.count() == 0:
+        result = models.Result.objects.latest()
+        first_in_series = None
+        for r in models.Result.objects.all():
+            first_in_series = r
+            if r.search_term != result.search_term:
+                break
+        since_last_topic = pytz.utc.localize(datetime.datetime.utcnow()) - max([x.created_at for x in result.topics.all()])
+        since_last_search = pytz.utc.localize( datetime.datetime.utcnow() ) - first_in_series.created_at
+
+        if since_last_search.seconds > 180:
+            tt = get_twitter_trending_topics()
+            new_s_t = random.choice(tt)
+            print "timeout: searching for: %s" % new_s_t
+            do_search(new_s_t)
+
+        if models.Result.objects.count() == 0 or since_last_topic.seconds > settings.UPDATE_FREQUENCY:
             result = fetch()
-        if diff.seconds > settings.UPDATE_FREQUENCY:
-            result = fetch()
-        if result == None:
-            result = models.Result.objects.latest()
+
         json_data = serializers.serialize('json', [result])
         jd = json.loads(json_data)[0]
         jd['fields']['topics'] = json.loads(serializers.serialize('json', result.topics.all()))
