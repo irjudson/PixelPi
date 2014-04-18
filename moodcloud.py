@@ -329,27 +329,36 @@ def server():
 
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE)
     server = "http://%s:%d/" % (args.server, args.port)
+    last_search_term = None
+    new_term_seen = time.now()
     while True:
         serverpath = server + "data/"
         logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
+        
         data = json.loads(urllib2.urlopen(serverpath).read())
         if 'fields' not in data:
+            logger.debug("No data sent")
             continue
+        else:
+            if last_search_term != data['fields']['search_term']:
+                new_term_seen = time.now()
+                last_search_term = data['fields']['search_term']
+        
         all_off()
-        logger.debug("Data: ")
+        #logger.debug("Data: ")
         #logger.debug(json.dumps(data, sort_keys=True, indent=2))
-        logger.debug(data)
+        #logger.debug(data)
 
         ip = get_ip(server)
         
         if args.simulate != True:
             lcd.clear()
-            if 'fields' in data and 'search_term' in data['fields']:
+            if 'search_term' in data['fields']:
                 lcd.message('%s\n%s' % (ip, data['fields']['search_term']))
             else:
                 lcd.message('%s' % (ip))
         else:
-            if 'fields' in data and 'search_term' in data['fields']:
+            if 'search_term' in data['fields']:
                 logger.debug("Search Term: %s" % (data['fields']['search_term']))
 
         logger.debug("Playing sounds...")
