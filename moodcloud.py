@@ -341,7 +341,7 @@ def server():
         
         if args.simulate != True:
             lcd.clear()
-            if 'fields' in data and search_term' in data['fields']:
+            if 'fields' in data and 'search_term' in data['fields']:
                 lcd.message('%s\n%s' % (ip, data['fields']['search_term']))
             else:
                 lcd.message('%s' % (ip))
