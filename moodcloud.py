@@ -11,7 +11,6 @@ import logging
 import array
 from subprocess import * 
 from PIL import Image
-from BeautifulSoup import BeautifulSoup
 
 logger = logging.getLogger("moodcloud")
 logger.setLevel(logging.DEBUG)
@@ -334,19 +333,23 @@ def server():
         serverpath = server + "data/"
         logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
         data = json.loads(urllib2.urlopen(serverpath).read())
+        if 'fields' not in data:
+            continue
+        all_off()
         logger.debug("Data: ")
-        logger.debug(json.dumps(data, sort_keys=True, indent=2))
+        #logger.debug(json.dumps(data, sort_keys=True, indent=2))
+        logger.debug(data)
 
         ip = get_ip(server)
         
         if args.simulate != True:
             lcd.clear()
-            if 'search_term' in data['fields']:
+            if 'fields' in data and 'search_term' in data['fields']:
                 lcd.message('%s\n%s' % (ip, data['fields']['search_term']))
             else:
                 lcd.message('%s' % (ip))
         else:
-            if 'search_term' in data['fields']:
+            if 'fields' in data and 'search_term' in data['fields']:
                 logger.debug("Search Term: %s" % (data['fields']['search_term']))
 
         logger.debug("Playing sounds...")
