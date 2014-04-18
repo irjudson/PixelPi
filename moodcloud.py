@@ -331,7 +331,6 @@ def server():
     server = "http://%s:%d/" % (args.server, args.port)
     while True:
         all_off()
-        all_on()
         serverpath = server + "data/"
         logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
         data = json.loads(urllib2.urlopen(serverpath).read())
@@ -342,12 +341,12 @@ def server():
         
         if args.simulate != True:
             lcd.clear()
-            if 'search_term' in data['fields']:
+            if 'fields' in data and search_term' in data['fields']:
                 lcd.message('%s\n%s' % (ip, data['fields']['search_term']))
             else:
                 lcd.message('%s' % (ip))
         else:
-            if 'search_term' in data['fields']:
+            if 'fields' in data and 'search_term' in data['fields']:
                 logger.debug("Search Term: %s" % (data['fields']['search_term']))
 
         logger.debug("Playing sounds...")
