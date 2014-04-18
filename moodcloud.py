@@ -11,7 +11,6 @@ import logging
 import array
 from subprocess import * 
 from PIL import Image
-from BeautifulSoup import BeautifulSoup
 
 logger = logging.getLogger("moodcloud")
 logger.setLevel(logging.DEBUG)
