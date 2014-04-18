@@ -333,6 +333,8 @@ def server():
         serverpath = server + "data/"
         logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
         data = json.loads(urllib2.urlopen(serverpath).read())
+        if 'fields' not in data:
+            continue
         all_off()
         logger.debug("Data: ")
         #logger.debug(json.dumps(data, sort_keys=True, indent=2))
