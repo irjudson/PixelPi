@@ -329,8 +329,6 @@ def server():
 
     pixel_output = bytearray(args.num_leds * PIXEL_SIZE)
     server = "http://%s:%d/" % (args.server, args.port)
-    last_search_term = None
-    new_term_seen = time.now()
     while True:
         serverpath = server + "data/"
         logger.debug("Grabbing next set of sentiment data from %s." % serverpath)
@@ -339,11 +337,7 @@ def server():
         if 'fields' not in data:
             logger.debug("No data sent")
             continue
-        else:
-            if last_search_term != data['fields']['search_term']:
-                new_term_seen = time.now()
-                last_search_term = data['fields']['search_term']
-        
+
         all_off()
         #logger.debug("Data: ")
         #logger.debug(json.dumps(data, sort_keys=True, indent=2))
