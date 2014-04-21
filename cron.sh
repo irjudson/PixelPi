@@ -7,6 +7,8 @@ PID="`ps auwx | grep moodcloud.py | grep -v grep`"
 
 if [ "x${PID}" == "x" ]; then
 	echo "Moodcloud not running, restarting."
+	/home/pi/moodcloud/startup.sh
+	exit 0
 else
 	echo "Moodcloud running, exiting."
 fi
