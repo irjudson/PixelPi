@@ -50,3 +50,11 @@ class Result(models.Model):
     class Meta:
         get_latest_by = 'created_at'
         ordering = ['-created_at']
+
+class TwitterTopic(models.Model):
+    topic = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        get_latest_by = 'created_at'
+        ordering = ['-created_at']

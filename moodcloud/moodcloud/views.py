@@ -36,7 +36,24 @@ def make_result_from_json(json_data):
         return None
 
 def fetch():
+    # Fetch the latest data
     result = make_result_from_json(json.loads(urllib2.urlopen(settings.DATA_URL).read()))
+
+    # Fetch trending topics if the latest is > 15 minutes old
+    fifteen_minutes_in_seconds = 15 * 60
+    if len(models.TwitterTopic.objects.all()) > 0:
+        since_last_topic = pytz.utc.localize(datetime.datetime.utcnow()) - models.TwitterTopic.objects.latest().created_at
+        if since_last_topic.seconds > fifteen_minutes_in_seconds:
+            get_twitter_trending_topics()
+    else:
+        get_twitter_trending_topics()
+
+    # Clean out old topics, results and trending topics keep the latest 50
+    results = models.Result.objects.all()
+    [x.delete for x in results[50:]]
+    ttopics = models.TwitterTopic.objects.all()
+    [x.delete for x in ttopics[50:]]
+
     return result
 
 def do_search(search_term):
@@ -53,22 +70,22 @@ def do_search(search_term):
     return result
 
 def get_twitter_trending_topics():
-    trending_topics = list()
+    topic = None
     try:
         twitter = Twitter(auth=OAuth(settings.OAUTH_TOKEN, settings.OAUTH_SECRET,
                                      settings.CONSUMER_KEY, settings.CONSUMER_SECRET))
-        for t in [x['name'] for x in twitter.trends.place(_id="1")[0]['trends']][:4]:
+        for t in [x['name'] for x in twitter.trends.place(_id="1")[0]['trends']]:
             if t[0] == "#":
-                trending_topics.append(t[1:])
+                new_topic = models.TwitterTopic(topic=t[1:])
             else:
-                trending_topics.append(t)
+                new_topic = models.TwitterTopic(topic=t)
+            new_topic.save()
     except Exception as e:
         print e
-    return trending_topics
 
 def home(request):
     context = RequestContext(request)
-    context['trends'] = get_twitter_trending_topics()
+    context['trends'] = [x.topic for x in models.TwitterTopic.objects.all()[:3]]
     context['recent'] = list()
     terms = list()
     count = 0
@@ -116,7 +133,7 @@ def get_data(request):
         since_last_search = pytz.utc.localize( datetime.datetime.utcnow() ) - first_in_series.created_at
 
         if since_last_search.seconds > 180:
-            tt = get_twitter_trending_topics()
+            tt = models.TwitterTopic.objects.all()[:3]
             new_s_t = random.choice(tt)
             print "timeout: searching for: %s" % new_s_t
             do_search(new_s_t)
@@ -148,3 +165,11 @@ def register(request):
         addr = models.Address(network=jsondata['ip'])
         addr.save()
     return resp
+
+def info(request):
+    result = models.Result.objects.latest()
+    context = RequestContext(request)
+    context['Result'] = models.Result.objects.latest()
+    context['IP'] = models.Address.load().network or "Unknown"
+    context['IP_updated'] = models.Address.load().last_updated or "Never updated"
+    return render(request, 'info.html', context)
