@@ -60,6 +60,7 @@ def do_search(search_term):
     server_url = "http://whooly.cloudapp.net/api/MoodCloud?term=%s" % urllib.quote_plus(search_term)
 
     request = urllib2.Request(server_url)
+    print "Calling GET %s" % server_url
     response = urllib2.urlopen(request)
     data = response.read()
     jd = json.loads(data)
@@ -135,8 +136,8 @@ def get_data(request):
         if since_last_search.seconds > 180:
             tt = models.TwitterTopic.objects.all()[:3]
             new_s_t = random.choice(tt)
-            print "timeout: searching for: %s" % new_s_t
-            do_search(new_s_t)
+            print "timeout: searching for: %s" % new_s_t.topic
+            do_search(new_s_t.topic)
 
         if models.Result.objects.count() == 0 or since_last_topic.seconds > settings.UPDATE_FREQUENCY:
             result = fetch()
