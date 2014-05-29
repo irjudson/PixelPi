@@ -77,9 +77,8 @@ def get_twitter_trending_topics():
                                      settings.CONSUMER_KEY, settings.CONSUMER_SECRET))
         for t in [x['name'] for x in twitter.trends.place(_id="1")[0]['trends']]:
             if t[0] == "#":
-                new_topic = models.TwitterTopic(topic=t[1:])
-            else:
-                new_topic = models.TwitterTopic(topic=t)
+                t = t[1:]
+            new_topic = models.TwitterTopic(topic=t.encode('ascii',errors='ignore'))
             new_topic.save()
     except Exception as e:
         print e
@@ -135,22 +134,28 @@ def get_data(request):
 
         if since_last_search.seconds > 180:
             tt = models.TwitterTopic.objects.all()[:3]
-            new_s_t = random.choice(tt)
-            print "timeout: searching for: %s" % new_s_t.topic
-            do_search(new_s_t.topic)
-
+            if len(tt) > 0:
+                new_s_t = random.choice(tt)
+                new_s_t = filter(lambda x: x in string.printable, new_s_t.topic)
+                print "timeout: searching for: %s" % new_s_t
+                do_search(new_s_t)
+            else:
+                result = None
         if models.Result.objects.count() == 0 or since_last_topic.seconds > settings.UPDATE_FREQUENCY:
             result = fetch()
-
-        json_data = serializers.serialize('json', [result])
-        jd = json.loads(json_data)[0]
-        jd['fields']['topics'] = json.loads(serializers.serialize('json', result.topics.all()))
-        moods = dict()
-        count = 0
-        for topic in result.topics.all():
-            jmd = json.loads(serializers.serialize('json', [topic.mood]))[0]
-            jd['fields']['topics'][count]['fields']['mood'] = jmd
-            count += 1
+        if result is not None:
+            json_data = serializers.serialize('json', [result])
+            jd = json.loads(json_data)[0]
+            jd['fields']['topics'] = json.loads(serializers.serialize('json', result.topics.all()))
+            moods = dict()
+            count = 0
+            for topic in result.topics.all():
+                jmd = json.loads(serializers.serialize('json', [topic.mood]))[0]
+                jd['fields']['topics'][count]['fields']['mood'] = jmd
+                count += 1
+        else:
+            print 'There was a problem with whooley!'
+            jd = {}
     except Exception as e:
         print "Exception: %s" % e.message
         traceback.print_exc()
