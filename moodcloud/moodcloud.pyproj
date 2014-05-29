@@ -31,7 +31,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="fetchdata.py" />
+    <Compile Include="fetchjob.py" />
     <Compile Include="manage.py" />
     <Compile Include="moodcloud\models.py" />
     <Compile Include="moodcloud\tests.py" />
@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="moodcloud\" />
+    <Folder Include="moodcloud\fixtures\" />
     <Folder Include="moodcloud\static\" />
     <Folder Include="moodcloud\static\img\" />
     <Folder Include="moodcloud\static\js\" />
@@ -75,21 +76,33 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="moodcloud.sqlite3" />
-    <Content Include="moodcloud\static\img\body-bg.png" />
-    <Content Include="moodcloud\static\img\highlight-bg.jpg" />
-    <Content Include="moodcloud\static\img\hr.png" />
-    <Content Include="moodcloud\static\img\octocat-icon.png" />
-    <Content Include="moodcloud\static\img\tar-gz-icon.png" />
-    <Content Include="moodcloud\static\img\zip-icon.png" />
+    <Content Include="moodcloud\fixtures\emotions.yaml" />
+    <Content Include="moodcloud\static\css\2cols.css" />
+    <Content Include="moodcloud\static\css\col.css" />
+    <Content Include="moodcloud\static\css\flaticon.css" />
+    <Content Include="moodcloud\static\css\flaticon.ttf" />
+    <Content Include="moodcloud\static\css\flaticon.woff" />
+    <Content Include="moodcloud\static\img\01.png" />
+    <Content Include="moodcloud\static\img\02.png" />
+    <Content Include="moodcloud\static\img\Button_Back.png" />
+    <Content Include="moodcloud\static\img\Button_Search-Active.png" />
+    <Content Include="moodcloud\static\img\Button_Search-Inactive.png" />
+    <Content Include="moodcloud\static\img\Header.png" />
+    <Content Include="moodcloud\static\img\Header_Cloud.png" />
+    <Content Include="moodcloud\static\img\Header_Cloud2.png" />
+    <Content Include="moodcloud\static\img\Icon_PreviousSearches.png" />
+    <Content Include="moodcloud\static\img\Icon_TwitterTrendingTopics.png" />
+    <Content Include="moodcloud\static\img\Instruction.png" />
     <Content Include="moodcloud\static\js\ledstrip.js" />
-    <Content Include="moodcloud\static\js\main.js" />
     <Content Include="moodcloud\static\js\rAF.js" />
     <Content Include="moodcloud\static\js\ws2812.js" />
     <Content Include="moodcloud\static\css\ledstrip.css" />
     <Content Include="moodcloud\static\css\print.css" />
     <Content Include="moodcloud\static\css\pygment_trac.css" />
     <Content Include="moodcloud\static\css\stylesheet.css" />
-    <Content Include="moodcloud\templates\index.html" />
+    <Content Include="moodcloud\templates\home.html" />
+    <Content Include="moodcloud\templates\info.html" />
+    <Content Include="moodcloud\templates\search_results.html" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Python Tools\Microsoft.PythonTools.Django.targets" />
   <ProjectExtensions>
