@@ -14,6 +14,7 @@ import json
 import datetime
 import traceback
 import random
+import string
 
 from twitter import Twitter, OAuth
 
@@ -129,7 +130,8 @@ def get_data(request):
             first_in_series = r
             if r.search_term != result.search_term:
                 break
-        since_last_topic = pytz.utc.localize(datetime.datetime.utcnow()) - max([x.created_at for x in result.topics.all()])
+        most_recent = max([x.created_at for x in result.topics.all()])
+        since_last_topic = pytz.utc.localize(datetime.datetime.utcnow()) - most_recent
         since_last_search = pytz.utc.localize( datetime.datetime.utcnow() ) - first_in_series.created_at
 
         if since_last_search.seconds > 180:
